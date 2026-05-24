@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
 import biryaniImg from "@/assets/dish-biryani.jpg";
@@ -41,6 +42,10 @@ const specialties = [
 ];
 
 function Index() {
+  const fadeUp = {
+    hidden: { opacity: 0, y: 24 },
+    show: { opacity: 1, y: 0 },
+  };
   return (
     <>
       {/* HERO */}
@@ -53,28 +58,49 @@ function Index() {
           className="absolute inset-0 -z-10 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/80" />
-        <div className="mx-auto max-w-5xl px-6 py-32 text-center text-background lg:py-44">
-          <p className="mb-5 text-xs font-medium uppercase tracking-[0.35em] text-background/80">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } } }}
+          className="mx-auto max-w-5xl px-6 py-32 text-center text-background lg:py-44"
+        >
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-5 text-xs font-medium uppercase tracking-[0.35em] text-background/80"
+          >
             Authentic · Heritage · Home-Cooked
-          </p>
-          <h1 className="font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl">
+          </motion.p>
+          <motion.h1
+            variants={fadeUp}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl"
+          >
             Premium Pakistani catering,<br />
             crafted the way it was meant to be.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-background/85 sm:text-lg">
+          </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-background/85 sm:text-lg"
+          >
             Traditional spice blends, slow-cooking methods, and recipes handed down
             through generations — brought to your wedding, aqeeqah, Eid event,
             corporate gathering or milestone celebration.
-          </p>
-          <div className="mt-10">
+          </motion.p>
+          <motion.div
+            variants={fadeUp}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10"
+          >
             <Link
               to="/booking"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-lg transition-all hover:shadow-xl hover:brightness-105"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:brightness-105"
             >
               Book a Catering Inquiry
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* SERVICE AREA */}
@@ -100,9 +126,14 @@ function Index() {
           </h2>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
-          {specialties.map((dish) => (
-            <article
+          {specialties.map((dish, i) => (
+            <motion.article
               key={dish.name}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4 }}
               className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg"
             >
               <div className="aspect-[4/3] overflow-hidden bg-secondary">
@@ -121,7 +152,7 @@ function Index() {
                   {dish.description}
                 </p>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
         <div className="mt-14 text-center">
