@@ -29,7 +29,7 @@ export const listBookings = createServerFn({ method: "GET" })
 
 const UpdateStatusSchema = z.object({
   id: z.string().uuid(),
-  status: z.enum(["Pending Phone Call", "Confirmed", "Cancelled"]),
+  status: z.enum(["Pending Phone Call", "Confirmed", "Served", "Cancelled"]),
 });
 
 export const updateBookingStatus = createServerFn({ method: "POST" })
@@ -40,6 +40,21 @@ export const updateBookingStatus = createServerFn({ method: "POST" })
     const { error } = await supabaseAdmin
       .from("bookings")
       .update({ status: data.status })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+const DeleteBookingSchema = z.object({ id: z.string().uuid() });
+
+export const deleteBooking = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => DeleteBookingSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { error } = await supabaseAdmin
+      .from("bookings")
+      .delete()
       .eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
