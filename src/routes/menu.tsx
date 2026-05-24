@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import { MENU } from "@/lib/menu-data";
 
 export const Route = createFileRoute("/menu")({
@@ -26,8 +27,16 @@ function MenuPage() {
           <section key={group.group}>
             <h2 className="mb-8 border-b border-border pb-3 font-display text-3xl text-foreground">{group.group}</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {group.sections.map((section) => (
-                <article key={section.name} className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-shadow hover:shadow-md">
+              {group.sections.map((section, i) => (
+                <motion.article
+                  key={section.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+                >
                   <h3 className="font-display text-xl text-primary">{section.name}</h3>
                   <ul className="mt-4 space-y-2">
                     {section.items.map((item) => (
@@ -37,7 +46,7 @@ function MenuPage() {
                       </li>
                     ))}
                   </ul>
-                </article>
+                </motion.article>
               ))}
             </div>
           </section>
