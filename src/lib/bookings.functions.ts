@@ -7,7 +7,7 @@ const BookingSchema = z.object({
   email: z.string().trim().email().max(255),
   phone: z.string().trim().min(5).max(40),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guest_count: z.enum(["10-25", "26-50", "51-100", "100+"]),
+  guest_count: z.enum(["10-25", "26-50"]),
   event_type: z.enum([
     "Wedding",
     "Aqeeqah",
