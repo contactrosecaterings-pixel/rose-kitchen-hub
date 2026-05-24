@@ -44,7 +44,7 @@ export function SiteNav() {
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="relative z-[10000] flex h-10 w-10 items-center justify-center rounded-full text-foreground md:hidden"
+          className={`relative z-[10000] flex h-10 w-10 items-center justify-center rounded-full md:hidden ${open ? "text-neutral-900" : "text-foreground"}`}
           onClick={() => setOpen((v) => !v)}
         >
           <span className="relative block h-4 w-6">
@@ -77,7 +77,7 @@ export function SiteNav() {
             animate={{ opacity: 1, height: "100vh" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-x-0 top-0 z-[9999] overflow-hidden bg-neutral-950/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-x-0 top-0 z-[9999] overflow-hidden bg-white md:hidden"
           >
             <motion.nav
               initial="closed"
@@ -96,13 +96,13 @@ export function SiteNav() {
                     open: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
                     closed: { opacity: 0, y: -20, transition: { duration: 0.2 } },
                   }}
-                  className="border-b border-white/10"
+                  className="border-b border-neutral-200"
                 >
                   <Link
                     to={l.to}
                     activeOptions={{ exact: l.to === "/" }}
                     onClick={() => setOpen(false)}
-                    className="block py-5 font-display text-3xl font-semibold tracking-tight text-white/90 transition-colors hover:text-primary"
+                    className="block py-5 font-display text-3xl font-semibold tracking-tight text-neutral-900 transition-colors hover:text-primary"
                     activeProps={{ className: "text-primary" }}
                   >
                     {l.label}
