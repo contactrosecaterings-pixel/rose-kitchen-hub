@@ -1,6 +1,3 @@
 [build]
   command = "bun run build"
   publish = "dist/client"
-
-[functions]
-  directory = "dist/server"
