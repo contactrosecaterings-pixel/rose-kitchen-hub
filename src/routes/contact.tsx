@@ -28,14 +28,14 @@ function ContactPage() {
 
       <div className="mt-14 grid gap-6 md:grid-cols-3">
         <a
-          href="tel:+11234567890"
+          href="tel:+14374101212"
           className="group rounded-2xl border border-border/70 bg-card p-8 transition-all hover:border-primary/50 hover:shadow-md"
         >
           <Phone className="h-6 w-6 text-primary" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Phone
           </p>
-          <p className="mt-2 font-display text-2xl text-foreground">(123) 456-7890</p>
+          <p className="mt-2 font-display text-2xl text-foreground">(437) 410-1212</p>
         </a>
 
         <a
