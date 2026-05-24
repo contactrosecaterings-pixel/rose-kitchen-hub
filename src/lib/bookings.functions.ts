@@ -80,6 +80,17 @@ export const submitBooking = createServerFn({ method: "POST" })
       console.error("[new-booking-alert] send failed", err);
     }
 
+    // ----- client confirmation email -----
+    try {
+      await sendClientConfirmation({
+        to: data.email,
+        bookingId: inserted?.id,
+        body: emailPayload.body,
+      });
+    } catch (err) {
+      console.error("[client-confirmation] send failed", err);
+    }
+
     return { ok: true as const, id: inserted?.id };
   });
 
