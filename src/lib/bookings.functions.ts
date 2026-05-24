@@ -80,6 +80,17 @@ export const submitBooking = createServerFn({ method: "POST" })
       console.error("[new-booking-alert] send failed", err);
     }
 
+    // ----- client confirmation email -----
+    try {
+      await sendClientConfirmation({
+        to: data.email,
+        bookingId: inserted?.id,
+        body: emailPayload.body,
+      });
+    } catch (err) {
+      console.error("[client-confirmation] send failed", err);
+    }
+
     return { ok: true as const, id: inserted?.id };
   });
 
@@ -262,5 +273,157 @@ function renderAlertText(p: NewBookingAlertPayload): string {
     `  Preferred Call Time: ${b.preferredCallTime}`,
     ``,
     `Booking ID: ${p.bookingId || "—"}`,
+  ].join("\n");
+}
+
+async function sendClientConfirmation(args: {
+  to: string;
+  bookingId?: string;
+  body: NewBookingAlertPayload["body"];
+}) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("[client-confirmation] RESEND_API_KEY not set — skipping live send");
+    return { ok: false as const, skipped: true };
+  }
+
+  const subject = `We received your catering request, ${args.body.name} 🌹`;
+  const html = renderClientHtml(args);
+  const text = renderClientText(args);
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from: "Rose Caterings <onboarding@resend.dev>",
+      to: [args.to],
+      reply_to: NOTIFY_RECIPIENT,
+      subject,
+      html,
+      text,
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    throw new Error(`Resend ${res.status}: ${errText}`);
+  }
+  return { ok: true as const };
+}
+
+function renderClientHtml(args: {
+  bookingId?: string;
+  body: NewBookingAlertPayload["body"];
+}): string {
+  const b = args.body;
+  const dishes =
+    b.preferredDishes && b.preferredDishes.length
+      ? `<ul style="margin:6px 0 0;padding-left:18px;color:#1f2937;">${b.preferredDishes
+          .map((d) => `<li style="margin:2px 0;">${esc(d)}</li>`)
+          .join("")}</ul>`
+      : `<div style="color:#6b7280;">No specific dishes selected</div>`;
+
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:6px 10px 6px 0;color:#6b7280;font-size:13px;white-space:nowrap;">${label}</td>
+      <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${value}</td>
+    </tr>`;
+
+  const section = (icon: string, title: string, inner: string) => `
+    <div style="margin:20px 0;padding:18px 20px;background:#fafaf7;border:1px solid #ece9df;border-radius:12px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a07a2c;margin-bottom:8px;">
+        ${icon} ${title}
+      </div>
+      ${inner}
+    </div>`;
+
+  return `<!doctype html>
+<html><body style="margin:0;padding:0;background:#f5f3ee;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+    <div style="background:#1f2937;color:#fff;padding:22px 24px;border-radius:14px 14px 0 0;">
+      <div style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#d4b66a;">Rose Caterings</div>
+      <div style="margin-top:6px;font-size:22px;font-weight:700;">Thank you, ${esc(b.name)} 🌹</div>
+      <div style="margin-top:4px;font-size:14px;color:#d1d5db;">We've received your catering request and will call you at your preferred time.</div>
+    </div>
+    <div style="background:#ffffff;padding:8px 24px 24px;border-radius:0 0 14px 14px;border:1px solid #ece9df;border-top:none;">
+      <div style="margin:18px 0 4px;color:#1f2937;font-size:15px;">
+        Here's a summary of what you submitted. If anything looks off, just reply to this email and we'll fix it.
+      </div>
+      ${section(
+        "📅",
+        "Event Details",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Event Date", esc(b.eventDate))}
+          ${row("Guest Count", esc(b.guestCount))}
+          ${row("Event Type", esc(b.eventType))}
+        </table>`,
+      )}
+      ${section(
+        "🚚",
+        "Service",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Service Type", esc(b.serviceType))}
+        </table>`,
+      )}
+      ${section("🍲", "Menu Preferences", dishes)}
+      ${section(
+        "⚠️",
+        "Allergies & Notes",
+        `<div style="color:#1f2937;font-size:14px;white-space:pre-wrap;">${
+          b.allergies ? esc(b.allergies) : '<span style="color:#6b7280;">None provided</span>'
+        }</div>`,
+      )}
+      ${section(
+        "📞",
+        "Follow-Up",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Preferred Call Time", esc(b.preferredCallTime))}
+          ${row("Your Phone", esc(b.phone))}
+        </table>`,
+      )}
+      <div style="margin-top:24px;padding-top:18px;border-top:1px solid #ece9df;font-size:12px;color:#6b7280;text-align:center;">
+        Booking ID: ${esc(args.bookingId || "—")} · Rose Caterings
+      </div>
+    </div>
+  </div>
+</body></html>`;
+}
+
+function renderClientText(args: {
+  bookingId?: string;
+  body: NewBookingAlertPayload["body"];
+}): string {
+  const b = args.body;
+  return [
+    `Thank you, ${b.name}!`,
+    ``,
+    `We've received your catering request and will call you at your preferred time.`,
+    `Here's a summary of what you submitted:`,
+    ``,
+    `📅 EVENT DETAILS`,
+    `  Date:   ${b.eventDate}`,
+    `  Guests: ${b.guestCount}`,
+    `  Type:   ${b.eventType}`,
+    ``,
+    `🚚 SERVICE`,
+    `  Service Type: ${b.serviceType}`,
+    ``,
+    `🍲 MENU PREFERENCES`,
+    b.preferredDishes.length
+      ? b.preferredDishes.map((d) => `  • ${d}`).join("\n")
+      : `  (none selected)`,
+    ``,
+    `⚠️ ALLERGIES & NOTES`,
+    `  ${b.allergies || "(none)"}`,
+    ``,
+    `📞 FOLLOW-UP`,
+    `  Preferred Call Time: ${b.preferredCallTime}`,
+    `  Your Phone:          ${b.phone}`,
+    ``,
+    `Booking ID: ${args.bookingId || "—"}`,
+    `— Rose Caterings`,
   ].join("\n");
 }
