@@ -137,7 +137,7 @@ async function sendNewBookingAlert(payload: NewBookingAlertPayload) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: "Rose Caterings <orders@rosecaterings.com>",
+      from: "Rose Caterings <bookings@rosecaterings.com>",
       to: [NOTIFY_RECIPIENT],
       reply_to: payload.body.email,
       subject: payload.subject,
@@ -297,7 +297,7 @@ async function sendClientConfirmation(args: {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: "Rose Caterings <orders@rosecaterings.com>",
+      from: "Rose Caterings <bookings@rosecaterings.com>",
       to: [args.to],
       reply_to: NOTIFY_RECIPIENT,
       subject,
