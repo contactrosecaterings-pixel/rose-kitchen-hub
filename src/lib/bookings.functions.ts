@@ -72,10 +72,12 @@ export const submitBooking = createServerFn({ method: "POST" })
       },
     };
 
+    // Fire-and-forget so a slow email API can never block the user's
+    // success state. Failures are logged but never thrown to the client.
     try {
       await sendNewBookingAlert(emailPayload);
     } catch (err) {
-      console.error("[new-booking-alert] mock send failed", err);
+      console.error("[new-booking-alert] send failed", err);
     }
 
     return { ok: true as const, id: inserted?.id };
@@ -101,35 +103,164 @@ type NewBookingAlertPayload = {
   };
 };
 
+const NOTIFY_RECIPIENT = "contact.rosecaterings@gmail.com";
+
 /**
- * Mock email sender for the `new-booking-alert` template.
- *
- * Replace the body of this function with a real provider call (Resend,
- * SendGrid, Postmark, AWS SES, etc.) once the production domain is verified
- * on the permanent hosting environment. The shape of `payload` already
- * matches a typical transactional email request.
+ * Sends the `new-booking-alert` via Resend. Designed for free-tier use:
+ * sends from `onboarding@resend.dev` so no domain verification is required.
+ * Set RESEND_API_KEY in Lovable Cloud secrets to enable live delivery.
  */
 async function sendNewBookingAlert(payload: NewBookingAlertPayload) {
-  const lines = [
-    `From: ${payload.from}`,
-    `To: ${payload.to}`,
-    `Subject: ${payload.subject}`,
-    "",
-    `New catering request received${payload.bookingId ? ` (id: ${payload.bookingId})` : ""}.`,
-    "",
-    `Name:               ${payload.body.name}`,
-    `Phone:              ${payload.body.phone}`,
-    `Email:              ${payload.body.email}`,
-    `Event Date:         ${payload.body.eventDate}`,
-    `Guest Count:        ${payload.body.guestCount}`,
-    `Event Type:         ${payload.body.eventType}`,
-    `Service Type:       ${payload.body.serviceType}`,
-    `Preferred Call Time:${payload.body.preferredCallTime}`,
-    `Preferred Dishes:   ${payload.body.preferredDishes.join(", ") || "—"}`,
-    `Allergies / Notes:  ${payload.body.allergies ?? "—"}`,
-    "",
-    `View in dashboard: /admin`,
-  ];
-  console.log("[new-booking-alert]\n" + lines.join("\n"));
-  return { ok: true as const, mocked: true };
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("[new-booking-alert] RESEND_API_KEY not set — skipping live send");
+    return { ok: false as const, skipped: true };
+  }
+
+  const html = renderAlertHtml(payload);
+  const text = renderAlertText(payload);
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from: "Rose Caterings <onboarding@resend.dev>",
+      to: [NOTIFY_RECIPIENT],
+      reply_to: payload.body.email,
+      subject: payload.subject,
+      html,
+      text,
+    }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => "");
+    throw new Error(`Resend ${res.status}: ${errText}`);
+  }
+  return { ok: true as const };
+}
+
+function esc(input: string | null | undefined): string {
+  if (!input) return "";
+  return String(input)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderAlertHtml(p: NewBookingAlertPayload): string {
+  const b = p.body;
+  const dishes =
+    b.preferredDishes && b.preferredDishes.length
+      ? `<ul style="margin:6px 0 0;padding-left:18px;color:#1f2937;">${b.preferredDishes
+          .map((d) => `<li style="margin:2px 0;">${esc(d)}</li>`)
+          .join("")}</ul>`
+      : `<div style="color:#6b7280;">No specific dishes selected</div>`;
+
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:6px 10px 6px 0;color:#6b7280;font-size:13px;white-space:nowrap;">${label}</td>
+      <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${value}</td>
+    </tr>`;
+
+  const section = (icon: string, title: string, inner: string) => `
+    <div style="margin:20px 0;padding:18px 20px;background:#fafaf7;border:1px solid #ece9df;border-radius:12px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#a07a2c;margin-bottom:8px;">
+        ${icon} ${title}
+      </div>
+      ${inner}
+    </div>`;
+
+  return `<!doctype html>
+<html><body style="margin:0;padding:0;background:#f5f3ee;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:600px;margin:0 auto;padding:24px 16px;">
+    <div style="background:#1f2937;color:#fff;padding:22px 24px;border-radius:14px 14px 0 0;">
+      <div style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#d4b66a;">Rose Caterings</div>
+      <div style="margin-top:6px;font-size:22px;font-weight:700;">🚨 New Catering Request</div>
+      <div style="margin-top:4px;font-size:14px;color:#d1d5db;">from <strong>${esc(b.name)}</strong></div>
+    </div>
+    <div style="background:#ffffff;padding:8px 24px 24px;border-radius:0 0 14px 14px;border:1px solid #ece9df;border-top:none;">
+      ${section(
+        "👤",
+        "Client Info",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Name", esc(b.name))}
+          ${row("Email", `<a href="mailto:${esc(b.email)}" style="color:#a07a2c;text-decoration:none;">${esc(b.email)}</a>`)}
+          ${row("Phone", `<a href="tel:${esc(b.phone)}" style="color:#a07a2c;text-decoration:none;">${esc(b.phone)}</a>`)}
+        </table>`,
+      )}
+      ${section(
+        "📅",
+        "Event Details",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Event Date", esc(b.eventDate))}
+          ${row("Guest Count", esc(b.guestCount))}
+          ${row("Event Type", esc(b.eventType))}
+        </table>`,
+      )}
+      ${section(
+        "🚚",
+        "Logistics",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Service Type", esc(b.serviceType))}
+        </table>`,
+      )}
+      ${section("🍲", "Menu Preferences", dishes)}
+      ${section(
+        "⚠️",
+        "Special Notes",
+        `<div style="color:#1f2937;font-size:14px;white-space:pre-wrap;">${
+          b.allergies ? esc(b.allergies) : '<span style="color:#6b7280;">None provided</span>'
+        }</div>`,
+      )}
+      ${section(
+        "📞",
+        "Follow-Up",
+        `<table style="width:100%;border-collapse:collapse;">
+          ${row("Preferred Call Time", esc(b.preferredCallTime))}
+        </table>`,
+      )}
+      <div style="margin-top:24px;padding-top:18px;border-top:1px solid #ece9df;font-size:12px;color:#6b7280;text-align:center;">
+        Booking ID: ${esc(p.bookingId || "—")} · Reply directly to this email to reach the client.
+      </div>
+    </div>
+  </div>
+</body></html>`;
+}
+
+function renderAlertText(p: NewBookingAlertPayload): string {
+  const b = p.body;
+  return [
+    `🚨 New Catering Request from ${b.name}`,
+    ``,
+    `👤 CLIENT INFO`,
+    `  Name:  ${b.name}`,
+    `  Email: ${b.email}`,
+    `  Phone: ${b.phone}`,
+    ``,
+    `📅 EVENT DETAILS`,
+    `  Date:   ${b.eventDate}`,
+    `  Guests: ${b.guestCount}`,
+    `  Type:   ${b.eventType}`,
+    ``,
+    `🚚 LOGISTICS`,
+    `  Service Type: ${b.serviceType}`,
+    ``,
+    `🍲 MENU PREFERENCES`,
+    b.preferredDishes.length
+      ? b.preferredDishes.map((d) => `  • ${d}`).join("\n")
+      : `  (none selected)`,
+    ``,
+    `⚠️ SPECIAL NOTES`,
+    `  ${b.allergies || "(none)"}`,
+    ``,
+    `📞 FOLLOW-UP`,
+    `  Preferred Call Time: ${b.preferredCallTime}`,
+    ``,
+    `Booking ID: ${p.bookingId || "—"}`,
+  ].join("\n");
 }
