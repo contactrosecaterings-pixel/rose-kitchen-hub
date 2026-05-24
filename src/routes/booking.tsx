@@ -228,7 +228,7 @@ function BookingPage() {
                       type="tel"
                       value={form.phone}
                       onChange={(e) => update("phone", e.target.value)}
-                      placeholder="(123) 456-7890"
+                      placeholder="(437) 410-1212"
                       className="mt-1.5"
                     />
                   </div>

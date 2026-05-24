@@ -25,7 +25,7 @@ export function SiteFooter() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             Contact
           </p>
-          <p className="mt-3 text-sm text-foreground">(123) 456-7890</p>
+          <p className="mt-3 text-sm text-foreground">(437) 410-1212</p>
           <a
             href="mailto:contact.rosecaterings@gmail.com"
             className="block text-sm text-foreground hover:text-primary"
