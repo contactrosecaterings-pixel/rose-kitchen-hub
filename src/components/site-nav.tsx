@@ -15,12 +15,12 @@ const panelVariants = {
   visible: {
     x: 0,
     opacity: 1,
-    transition: { type: "spring", stiffness: 280, damping: 30 },
+    transition: { type: "spring" as const, stiffness: 280, damping: 30 },
   },
   exit: {
     x: "100%",
     opacity: 0,
-    transition: { type: "spring", stiffness: 280, damping: 30 },
+    transition: { type: "spring" as const, stiffness: 280, damping: 30 },
   },
 };
 
@@ -36,8 +36,8 @@ const listVariants = {
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
-  exit: { opacity: 0, y: 10, transition: { duration: 0.25, ease: "easeIn" } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
+  exit: { opacity: 0, y: 10, transition: { duration: 0.25, ease: "easeIn" as const } },
 };
 
 export function SiteNav() {
