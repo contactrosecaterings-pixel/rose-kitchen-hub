@@ -117,8 +117,7 @@ type NewBookingAlertPayload = {
 const NOTIFY_RECIPIENT = "contact.rosecaterings@gmail.com";
 
 /**
- * Sends the `new-booking-alert` via Resend. Designed for free-tier use:
- * sends from `onboarding@resend.dev` so no domain verification is required.
+ * Sends the `new-booking-alert` via Resend.
  * Set RESEND_API_KEY in Lovable Cloud secrets to enable live delivery.
  */
 async function sendNewBookingAlert(payload: NewBookingAlertPayload) {
@@ -138,7 +137,7 @@ async function sendNewBookingAlert(payload: NewBookingAlertPayload) {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: "Rose Caterings <onboarding@resend.dev>",
+      from: "Rose Caterings <orders@rosecaterings.com>",
       to: [NOTIFY_RECIPIENT],
       reply_to: payload.body.email,
       subject: payload.subject,
@@ -298,7 +297,7 @@ async function sendClientConfirmation(args: {
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      from: "Rose Caterings <onboarding@resend.dev>",
+      from: "Rose Caterings <orders@rosecaterings.com>",
       to: [args.to],
       reply_to: NOTIFY_RECIPIENT,
       subject,
