@@ -205,7 +205,7 @@ function BookingPage() {
                     id="full_name"
                     value={form.full_name}
                     onChange={(e) => update("full_name", e.target.value)}
-                    placeholder="e.g. Ayesha Khan"
+                    placeholder="First Last"
                     className="mt-1.5"
                   />
                 </div>
