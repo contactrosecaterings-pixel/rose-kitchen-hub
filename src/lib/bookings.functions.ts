@@ -47,31 +47,89 @@ export const submitBooking = createServerFn({ method: "POST" })
       throw new Error("Could not save your booking. Please try again.");
     }
 
-    // Fire-and-forget notification email (best effort, don't block success).
+    // ----- new-booking-alert notification (mock) -----
+    // The live email provider will be wired up on the permanent hosting
+    // environment. For now we build the full payload and log it so the
+    // integration point is fully defined and the admin still sees every
+    // booking in the /admin dashboard.
+    const emailPayload = {
+      to: "contact.rosecaterings@gmail.com",
+      from: "noreply@notify.rosecaterings.com",
+      subject: `🚨 New Catering Request from ${data.full_name}`,
+      template: "new-booking-alert",
+      bookingId: inserted?.id,
+      body: {
+        name: data.full_name,
+        phone: data.phone,
+        email: data.email,
+        eventDate: data.event_date,
+        guestCount: data.guest_count,
+        eventType: data.event_type,
+        serviceType: data.service_type,
+        preferredCallTime: data.preferred_call_time,
+        preferredDishes: data.preferred_dishes,
+        allergies: data.allergies || null,
+      },
+    };
+
     try {
-      await fetch(
-        new URL("/lovable/email/transactional/send", process.env.APP_URL ?? "http://localhost"),
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            templateName: "new-booking-alert",
-            recipientEmail: "contact.rosecaterings@gmail.com",
-            idempotencyKey: `booking-${inserted?.id}`,
-            templateData: {
-              fullName: data.full_name,
-              phone: data.phone,
-              email: data.email,
-              eventDate: data.event_date,
-              guestCount: data.guest_count,
-              preferredCallTime: data.preferred_call_time,
-            },
-          }),
-        },
-      ).catch(() => undefined);
-    } catch {
-      // ignore — admin can still see the booking in the dashboard
+      await sendNewBookingAlert(emailPayload);
+    } catch (err) {
+      console.error("[new-booking-alert] mock send failed", err);
     }
 
     return { ok: true as const, id: inserted?.id };
   });
+
+type NewBookingAlertPayload = {
+  to: string;
+  from: string;
+  subject: string;
+  template: string;
+  bookingId?: string;
+  body: {
+    name: string;
+    phone: string;
+    email: string;
+    eventDate: string;
+    guestCount: string;
+    eventType: string;
+    serviceType: string;
+    preferredCallTime: string;
+    preferredDishes: string[];
+    allergies: string | null;
+  };
+};
+
+/**
+ * Mock email sender for the `new-booking-alert` template.
+ *
+ * Replace the body of this function with a real provider call (Resend,
+ * SendGrid, Postmark, AWS SES, etc.) once the production domain is verified
+ * on the permanent hosting environment. The shape of `payload` already
+ * matches a typical transactional email request.
+ */
+async function sendNewBookingAlert(payload: NewBookingAlertPayload) {
+  const lines = [
+    `From: ${payload.from}`,
+    `To: ${payload.to}`,
+    `Subject: ${payload.subject}`,
+    "",
+    `New catering request received${payload.bookingId ? ` (id: ${payload.bookingId})` : ""}.`,
+    "",
+    `Name:               ${payload.body.name}`,
+    `Phone:              ${payload.body.phone}`,
+    `Email:              ${payload.body.email}`,
+    `Event Date:         ${payload.body.eventDate}`,
+    `Guest Count:        ${payload.body.guestCount}`,
+    `Event Type:         ${payload.body.eventType}`,
+    `Service Type:       ${payload.body.serviceType}`,
+    `Preferred Call Time:${payload.body.preferredCallTime}`,
+    `Preferred Dishes:   ${payload.body.preferredDishes.join(", ") || "—"}`,
+    `Allergies / Notes:  ${payload.body.allergies ?? "—"}`,
+    "",
+    `View in dashboard: /admin`,
+  ];
+  console.log("[new-booking-alert]\n" + lines.join("\n"));
+  return { ok: true as const, mocked: true };
+}
