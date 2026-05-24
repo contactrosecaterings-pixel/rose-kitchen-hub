@@ -2,13 +2,24 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Loader2, Search, LogOut, Check } from "lucide-react";
+import { Loader2, Search, LogOut, ArrowRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { listBookings, updateBookingStatus } from "@/lib/admin.functions";
+import { listBookings, updateBookingStatus, deleteBooking } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -19,6 +30,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
   }),
   component: AdminPage,
 });
+
+type BookingStatus = "Pending Phone Call" | "Confirmed" | "Served" | "Cancelled";
 
 type Booking = {
   id: string;
@@ -36,11 +49,19 @@ type Booking = {
   created_at: string;
 };
 
+const NEXT_STATUS: Record<string, { next: BookingStatus; label: string } | null> = {
+  "Pending Phone Call": { next: "Confirmed", label: "Mark Called/Confirmed" },
+  Confirmed: { next: "Served", label: "Mark as Served" },
+  Served: null,
+  Cancelled: null,
+};
+
 function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const list = useServerFn(listBookings);
   const updateStatus = useServerFn(updateBookingStatus);
+  const removeBooking = useServerFn(deleteBooking);
   const [search, setSearch] = useState("");
 
   const { data, isLoading, error } = useQuery({
@@ -49,13 +70,22 @@ function AdminPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (vars: { id: string; status: "Confirmed" | "Cancelled" | "Pending Phone Call" }) =>
+    mutationFn: (vars: { id: string; status: BookingStatus }) =>
       updateStatus({ data: vars }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "bookings"] });
       toast.success("Status updated");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Update failed"),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => removeBooking({ data: { id } }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "bookings"] });
+      toast.success("Booking deleted");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Delete failed"),
   });
 
   const filtered = useMemo(() => {
@@ -179,21 +209,53 @@ function AdminPage() {
                       <StatusBadge status={b.status} />
                     </td>
                     <td className="px-4 py-4 text-right">
-                      {b.status !== "Confirmed" ? (
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            mutation.mutate({ id: b.id, status: "Confirmed" })
-                          }
-                          disabled={mutation.isPending}
-                          className="rounded-full"
-                        >
-                          <Check className="mr-1 h-3.5 w-3.5" />
-                          Mark Called/Confirmed
-                        </Button>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        {NEXT_STATUS[b.status] ? (
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              mutation.mutate({
+                                id: b.id,
+                                status: NEXT_STATUS[b.status]!.next,
+                              })
+                            }
+                            disabled={mutation.isPending}
+                            className="rounded-full transition-transform hover:scale-[1.03]"
+                          >
+                            <ArrowRight className="mr-1 h-3.5 w-3.5" />
+                            {NEXT_STATUS[b.status]!.label}
+                          </Button>
+                        ) : null}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="rounded-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently remove {b.full_name}'s request from the
+                                database. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => deleteMutation.mutate(b.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -210,6 +272,8 @@ function StatusBadge({ status }: { status: string }) {
   const styles =
     status === "Confirmed"
       ? "bg-green-100 text-green-800 border-green-200"
+      : status === "Served"
+        ? "bg-teal-100 text-teal-900 border-teal-200"
       : status === "Cancelled"
         ? "bg-red-100 text-red-800 border-red-200"
         : "bg-yellow-100 text-yellow-900 border-yellow-200";
