@@ -44,7 +44,7 @@ export function SiteNav() {
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="relative z-[10000] flex h-10 w-10 items-center justify-center rounded-full text-foreground md:hidden"
+          className={`relative z-[10000] flex h-10 w-10 items-center justify-center rounded-full md:hidden ${open ? "text-neutral-900" : "text-foreground"}`}
           onClick={() => setOpen((v) => !v)}
         >
           <span className="relative block h-4 w-6">
