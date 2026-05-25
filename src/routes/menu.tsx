@@ -15,7 +15,6 @@ export const Route = createFileRoute("/menu")({
 
 function MenuPage() {
   const words = ["home", "culture", "tradition", "Pakistan"];
-  const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
   const typed = useTypewriter(words);
 
   return (
