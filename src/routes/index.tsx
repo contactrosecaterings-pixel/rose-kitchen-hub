@@ -189,7 +189,7 @@ function Index() {
               whileHover={{ y: -4 }}
               className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-secondary">
+              <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                 <ParallaxImage src={dish.img} alt={dish.name} />
               </div>
               <div className="p-7">
