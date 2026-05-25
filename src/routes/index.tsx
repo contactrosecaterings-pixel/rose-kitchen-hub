@@ -251,7 +251,7 @@ function Index() {
               hidden: {},
               visible: { transition: { staggerChildren: 0.12 } },
             }}
-            className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+            className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-6 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0"
           >
             {reviews.map((r, i) => (
               <motion.article
