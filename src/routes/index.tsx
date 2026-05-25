@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef, useState } from "react";
-import { Quote, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
 import biryaniImg from "@/assets/dish-biryani-fresh.jpg";
@@ -49,21 +49,21 @@ const specialties = [
 const reviews = [
   {
     name: "Ayesha K.",
-    role: "Wedding · 220 guests",
+    role: "Wedding",
     img: reviewFamily,
     comment:
       "Rose Caterings made our wedding unforgettable. The biryani was perfectly spiced and every guest raved about the food. Setup was elegant and the team was incredibly professional.",
   },
   {
     name: "Omar R.",
-    role: "Aqeeqah · Family gathering",
+    role: "Aqeeqah",
     img: reviewBuffet,
     comment:
       "We hired them for our son's aqeeqah and the nihari tasted just like my grandmother used to make. Authentic, generous portions, and served with so much care.",
   },
   {
     name: "Sarah M.",
-    role: "Corporate event · 80 guests",
+    role: "Corporate Event",
     img: reviewPlatter,
     comment:
       "Catered our corporate event for 80 guests. Punctual, clean presentation, and the behari boti was the talk of the office for weeks. Will book again without hesitation.",
@@ -88,16 +88,36 @@ function Index() {
           className="absolute inset-0 -z-10"
           style={{ y: heroY, scale: heroScale, willChange: "transform" }}
         >
-          <SmoothImage
+          <img
             src={heroImg}
             alt="An overhead spread of authentic Pakistani dishes"
             width={1600}
             height={1024}
-            priority
-            className="h-full w-full object-cover"
+            decoding="async"
+            fetchPriority="high"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ willChange: "transform" }}
           />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            poster={heroImg}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ willChange: "transform", backfaceVisibility: "hidden" }}
+          >
+            <source
+              src="https://videos.pexels.com/video-files/3196284/3196284-uhd_2560_1440_25fps.mp4"
+              type="video/mp4"
+            />
+          </video>
         </motion.div>
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/80" />
+        <div
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/75 via-foreground/60 to-foreground/85"
+          style={{ backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)" }}
+        />
         <motion.div
           initial="hidden"
           animate="show"
@@ -186,8 +206,8 @@ function Index() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -4 }}
-              className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg"
+              className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg will-change-transform"
+              style={{ transform: "translate3d(0,0,0)" }}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                 <ParallaxImage src={dish.img} alt={dish.name} />
@@ -231,16 +251,12 @@ function Index() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 className={[
-                  "relative flex flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm",
+                  "relative flex flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] will-change-transform",
                   i === 1 ? "md:mt-10" : "",
                   i === 2 ? "md:-mt-4" : "",
                 ].join(" ")}
+                style={{ transform: "translate3d(0,0,0)" }}
               >
-                <Quote
-                  aria-hidden
-                  className="absolute -top-1 right-5 h-16 w-16 text-primary/10"
-                  strokeWidth={1.5}
-                />
                 <div
                   className={[
                     "relative overflow-hidden rounded-2xl bg-secondary",
