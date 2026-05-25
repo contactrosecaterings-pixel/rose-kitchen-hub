@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import { MENU } from "@/lib/menu-data";
 
 export const Route = createFileRoute("/menu")({
@@ -13,11 +14,40 @@ export const Route = createFileRoute("/menu")({
 });
 
 function MenuPage() {
+  const words = ["home", "culture", "tradition", "Pakistan"];
+  const [wordIndex, setWordIndex] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2400);
+    return () => clearInterval(id);
+  }, []);
+  const activeWord = words[wordIndex];
+
   return (
     <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
       <header className="mb-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Our Menu</p>
-        <h1 className="mt-3 font-display text-5xl text-foreground">A taste of home</h1>
+        <h1 className="mt-3 inline-flex flex-wrap items-baseline justify-center font-display text-5xl text-foreground">
+          <span>A taste of&nbsp;</span>
+          <motion.span
+            layout
+            transition={{ type: "spring", stiffness: 220, damping: 26 }}
+            className="relative inline-block overflow-hidden align-baseline text-primary"
+            style={{ lineHeight: 1.1 }}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
+              <motion.span
+                key={activeWord}
+                initial={{ y: 18, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -18, opacity: 0 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="inline-block whitespace-nowrap"
+              >
+                {activeWord}
+              </motion.span>
+            </AnimatePresence>
+          </motion.span>
+        </h1>
         <p className="mx-auto mt-5 max-w-2xl rounded-2xl border border-primary/30 bg-secondary/60 px-6 py-4 text-sm font-medium text-foreground">
           All items can be customized upon request. Contact us for a custom quote.
         </p>
