@@ -31,7 +31,7 @@ type FormState = {
   email: string;
   phone: string;
   event_date: string;
-  guest_count: "" | "10-25" | "26-50" | "51-100" | "100+";
+  guest_count: "" | number;
   event_type:
     | ""
     | "Wedding"
@@ -43,7 +43,11 @@ type FormState = {
   service_type: "" | "Drop-off Delivery" | "Pickup" | "Full-Service Catering";
   preferred_dishes: string[];
   allergies: string;
-  preferred_call_time: "" | "Morning" | "Afternoon" | "Evening";
+  preferred_call_time:
+    | ""
+    | "Morning (9 AM – 12 PM)"
+    | "Afternoon (12 PM – 5 PM)"
+    | "Evening (5 PM – 8 PM)";
 };
 
 const STEPS = ["Contact", "Event", "Logistics", "Follow-up"] as const;
@@ -80,7 +84,14 @@ function BookingPage() {
   const canAdvance = () => {
     if (step === 0)
       return form.full_name.trim() && /.+@.+\..+/.test(form.email) && form.phone.trim().length >= 5;
-    if (step === 1) return form.event_date && form.guest_count && form.event_type;
+    if (step === 1)
+      return (
+        form.event_date &&
+        typeof form.guest_count === "number" &&
+        form.guest_count >= 10 &&
+        form.guest_count <= 100 &&
+        form.event_type
+      );
     if (step === 2) return form.service_type;
     if (step === 3) return !!form.preferred_call_time;
     return false;
@@ -96,7 +107,7 @@ function BookingPage() {
           email: form.email.trim(),
           phone: form.phone.trim(),
           event_date: form.event_date,
-          guest_count: form.guest_count as Exclude<FormState["guest_count"], "">,
+          guest_count: form.guest_count as number,
           event_type: form.event_type as Exclude<FormState["event_type"], "">,
           service_type: form.service_type as Exclude<FormState["service_type"], "">,
           preferred_dishes: form.preferred_dishes,
@@ -251,11 +262,25 @@ function BookingPage() {
                 </div>
                 <div>
                   <Label>Guest count</Label>
-                  <PillGroup
-                    options={["10-25", "26-50", "51-100", "100+"]}
-                    value={form.guest_count}
-                    onChange={(v) => update("guest_count", v as FormState["guest_count"])}
+                  <Input
+                    id="guest_count"
+                    type="number"
+                    min={10}
+                    max={100}
+                    inputMode="numeric"
+                    placeholder="Minimum 10 guests"
+                    value={form.guest_count === "" ? "" : form.guest_count}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      if (raw === "") return update("guest_count", "");
+                      const n = Math.min(100, Math.max(0, parseInt(raw, 10) || 0));
+                      update("guest_count", n);
+                    }}
+                    className="mt-1.5"
                   />
+                  <p className="mt-1.5 text-xs text-muted-foreground">
+                    Minimum 10, maximum 100 guests.
+                  </p>
                 </div>
                 <div>
                   <Label>Event type</Label>
@@ -345,7 +370,11 @@ function BookingPage() {
                 <div>
                   <Label>Preferred call time</Label>
                   <PillGroup
-                    options={["Morning", "Afternoon", "Evening"]}
+                    options={[
+                      "Morning (9 AM – 12 PM)",
+                      "Afternoon (12 PM – 5 PM)",
+                      "Evening (5 PM – 8 PM)",
+                    ]}
                     value={form.preferred_call_time}
                     onChange={(v) =>
                       update("preferred_call_time", v as FormState["preferred_call_time"])

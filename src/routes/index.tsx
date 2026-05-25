@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useState } from "react";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
 import biryaniImg from "@/assets/dish-biryani.jpg";
@@ -46,15 +47,21 @@ function Index() {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
   };
+  const [heroLoaded, setHeroLoaded] = useState(false);
   return (
     <>
       {/* HERO */}
       <section className="relative isolate overflow-hidden">
-        <img
+        <motion.img
           src={heroImg}
           alt="An overhead spread of authentic Pakistani dishes"
           width={1600}
           height={1024}
+          onLoad={() => setHeroLoaded(true)}
+          initial={{ opacity: 0, scale: 1.04 }}
+          animate={heroLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.04 }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          style={{ willChange: "opacity, transform" }}
           className="absolute inset-0 -z-10 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/80" />
@@ -109,9 +116,15 @@ function Index() {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
             Proudly Serving
           </p>
-          <p className="mt-3 font-display text-2xl text-foreground sm:text-3xl">
-            Paris · Brantford · Greater Toronto Area
-          </p>
+          <div className="mt-3 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-10">
+            <p className="font-display text-2xl text-foreground sm:text-3xl">
+              Greater Toronto Area (GTA)
+            </p>
+            <span className="hidden h-6 w-px bg-border sm:block" aria-hidden />
+            <p className="font-display text-2xl text-foreground sm:text-3xl">
+              Brant County &amp; Surroundings
+            </p>
+          </div>
         </div>
       </section>
 
@@ -137,14 +150,7 @@ function Index() {
               className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg"
             >
               <div className="aspect-[4/3] overflow-hidden bg-secondary">
-                <img
-                  src={dish.img}
-                  alt={dish.name}
-                  loading="lazy"
-                  width={1024}
-                  height={768}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                <SpecialtyImage src={dish.img} alt={dish.name} />
               </div>
               <div className="p-7">
                 <h3 className="font-display text-2xl text-foreground">{dish.name}</h3>
@@ -165,5 +171,24 @@ function Index() {
         </div>
       </section>
     </>
+  );
+}
+
+function SpecialtyImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <motion.img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      width={1024}
+      height={768}
+      onLoad={() => setLoaded(true)}
+      initial={{ opacity: 0, scale: 1.03 }}
+      animate={loaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.03 }}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: "opacity, transform" }}
+      className="h-full w-full object-cover"
+    />
   );
 }
