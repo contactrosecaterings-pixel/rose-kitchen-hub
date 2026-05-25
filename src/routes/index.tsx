@@ -154,7 +154,7 @@ function Index() {
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-4 hidden max-w-2xl text-base leading-relaxed text-background/85 sm:mt-6 sm:block sm:text-lg"
+            className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-background/85 sm:mt-6 md:text-base lg:text-lg"
           >
             Traditional spice blends, slow-cooking methods, and recipes handed down
             through generations — brought to your wedding, aqeeqah, Eid event,
@@ -163,7 +163,7 @@ function Index() {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-6 sm:mt-10"
+            className="mt-5 sm:mt-10"
           >
             <Link
               to="/booking"
