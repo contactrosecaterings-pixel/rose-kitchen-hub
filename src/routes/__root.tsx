@@ -136,7 +136,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const pathname = useRouterState({ select: (s) => s.resolvedLocation?.pathname ?? s.location.pathname });
+  const activeRouteKey = useRouterState({
+    select: (s) => s.matches.at(-1)?.pathname ?? s.resolvedLocation?.pathname ?? s.location.pathname,
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -145,7 +147,7 @@ function RootComponent() {
         <main className="flex-1">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={pathname}
+              key={activeRouteKey}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
