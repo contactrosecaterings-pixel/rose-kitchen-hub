@@ -26,13 +26,20 @@ function MenuPage() {
           ✨ 100% Halal Certified
         </p>
         <h1 className="mt-6 font-display text-4xl text-foreground sm:text-6xl">
-          <span className="flex flex-col items-center justify-center gap-y-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3">
+          <span
+            className="flex flex-col items-center justify-center gap-y-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3"
+            style={{ minHeight: "5.5rem", lineHeight: 1.15 }}
+          >
             <span>A taste of</span>
             <span
               className="relative inline-flex items-baseline justify-center text-primary"
-              style={{ minWidth: `${longest.length + 1}ch`, lineHeight: 1.15 }}
+              style={{
+                minWidth: `${longest.length + 1}ch`,
+                minHeight: "1.2em",
+                lineHeight: 1.15,
+              }}
             >
-              <span className="whitespace-nowrap">{typed}</span>
+              <span className="whitespace-nowrap">{typed || "\u00A0"}</span>
               <span
                 aria-hidden
                 className="ml-[2px] inline-block w-[3px] translate-y-[2px] bg-primary align-middle"
