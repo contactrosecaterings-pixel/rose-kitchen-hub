@@ -82,10 +82,7 @@ function Index() {
   return (
     <>
       {/* HERO */}
-      <section
-        ref={heroRef}
-        className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block"
-      >
+      <section className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block">
         <div className="absolute inset-0 -z-10 bg-foreground" />
         <motion.div
           className="absolute inset-0 -z-10"
