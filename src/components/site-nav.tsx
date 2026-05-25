@@ -1,5 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 const links = [
   { to: "/", label: "Home" },
@@ -133,6 +134,7 @@ export function SiteNav() {
         </button>
       </div>
 
+      {typeof document !== "undefined" && createPortal(
       <div
         aria-hidden={!open}
         className={[
@@ -165,7 +167,9 @@ export function SiteNav() {
             </div>
           ))}
         </nav>
-      </div>
+      </div>,
+      document.body,
+      )}
     </header>
   );
 }
