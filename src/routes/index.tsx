@@ -75,7 +75,6 @@ function Index() {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
   };
-  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, 120]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.08]);
