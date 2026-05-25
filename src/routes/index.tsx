@@ -243,15 +243,25 @@ function Index() {
               Loved by families &amp; hosts
             </h2>
           </div>
-          <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.12 } },
+            }}
+            className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+          >
             {reviews.map((r, i) => (
               <motion.article
                 key={r.name}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                variants={{
+                  hidden: { opacity: 0, y: 28 },
+                  visible: { opacity: 1, y: 0 },
+                }}
                 whileHover={{ y: -6 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                 className={[
                   "rc-lift relative flex w-[85vw] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] md:w-auto md:shrink md:snap-align-none",
                   i === 1 ? "md:mt-10" : "",
@@ -284,7 +294,7 @@ function Index() {
                 </div>
               </motion.article>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
     </>
