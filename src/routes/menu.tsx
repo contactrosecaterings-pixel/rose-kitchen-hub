@@ -34,7 +34,6 @@ function MenuPage() {
             <span
               className="relative inline-flex items-center justify-center text-primary"
               style={{
-                minWidth: `${longest.length + 1}ch`,
                 minHeight: "1.2em",
                 lineHeight: 1.15,
               }}
