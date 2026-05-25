@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
 
 const links = [
   { to: "/", label: "Home" },
@@ -73,35 +72,17 @@ export function SiteNav() {
 
       <div
         aria-hidden={!open}
-        className="fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white md:hidden"
-        style={{
-          opacity: open ? 1 : 0,
-          visibility: open ? "visible" : "hidden",
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), visibility 360ms",
-          willChange: "opacity, transform",
-          transform: "translate3d(0,0,0)",
-        }}
+        className={[
+          "fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
+          open
+            ? "visible opacity-100 pointer-events-auto"
+            : "invisible opacity-0 pointer-events-none",
+        ].join(" ")}
+        style={{ willChange: "opacity", transform: "translate3d(0,0,0)" }}
       >
-        <motion.nav
-          initial={false}
-          animate={open ? "open" : "closed"}
-          variants={{
-            open: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } },
-            closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
-          }}
-          className="flex h-full flex-col gap-2 px-8 pb-12 pt-28"
-        >
+        <nav className="flex h-full flex-col gap-2 px-8 pb-12 pt-28">
           {links.map((l) => (
-            <motion.div
-              key={l.to}
-              variants={{
-                open: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
-                closed: { opacity: 0, y: -16, transition: { duration: 0.2 } },
-              }}
-              style={{ willChange: "transform, opacity" }}
-              className="border-b border-neutral-200"
-            >
+            <div key={l.to} className="border-b border-neutral-200">
               <Link
                 to={l.to}
                 activeOptions={{ exact: l.to === "/" }}
@@ -111,9 +92,9 @@ export function SiteNav() {
               >
                 {l.label}
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.nav>
+        </nav>
       </div>
     </header>
   );
