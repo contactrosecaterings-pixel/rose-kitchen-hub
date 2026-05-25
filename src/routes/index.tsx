@@ -293,43 +293,7 @@ function Index() {
   );
 }
 
-function SmoothImage({
-  src,
-  alt,
-  width,
-  height,
-  className,
-  priority = false,
-}: {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  className?: string;
-  priority?: boolean;
-}) {
-  const [loaded, setLoaded] = useState(false);
-  return (
-    <motion.img
-      src={src}
-      alt={alt}
-      width={width}
-      height={height}
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      fetchPriority={priority ? "high" : "low"}
-      onLoad={() => setLoaded(true)}
-      initial={false}
-      animate={{ opacity: loaded ? 1 : 0 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      style={{ willChange: "opacity", backfaceVisibility: "hidden" }}
-      className={className}
-    />
-  );
-}
-
-function ParallaxImage({ src, alt }: { src: string; alt: string }) {
-  const [loaded, setLoaded] = useState(false);
+function ParallaxImage({ src, alt, eager = false }: { src: string; alt: string; eager?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -337,22 +301,19 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   });
   const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
   return (
-    <div ref={ref} className="absolute inset-0 overflow-hidden">
+    <div ref={ref} className="absolute inset-0 overflow-hidden bg-secondary">
       <motion.img
         src={src}
         alt={alt}
-        loading="lazy"
+        loading={eager ? "eager" : "lazy"}
         decoding="async"
-        fetchPriority="low"
+        fetchPriority={eager ? "high" : "low"}
         width={1024}
         height={768}
-        onLoad={() => setLoaded(true)}
-        initial={false}
-        animate={{ opacity: loaded ? 1 : 0 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        style={{ y, scale: 1.12, willChange: "transform, opacity", backfaceVisibility: "hidden" }}
-        className="h-full w-full object-cover"
+        style={{ y, scale: 1.12, willChange: "transform", backfaceVisibility: "hidden" }}
+        className="h-full w-full object-cover animate-[rc-fade-in_500ms_ease-out_both]"
       />
+      <style>{`@keyframes rc-fade-in { from { opacity: 0 } to { opacity: 1 } }`}</style>
     </div>
   );
 }
