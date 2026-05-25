@@ -75,17 +75,13 @@ function Index() {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
   };
-  const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, 120]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.08]);
   return (
     <>
       {/* HERO */}
-      <section
-        ref={heroRef}
-        className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block"
-      >
+      <section className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block">
         <div className="absolute inset-0 -z-10 bg-foreground" />
         <motion.div
           className="absolute inset-0 -z-10"
