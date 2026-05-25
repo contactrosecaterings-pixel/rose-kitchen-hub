@@ -156,13 +156,21 @@
   }
 }
 
-/* Universal GPU-accelerated lift hover. Applied to all hoverable cards. */
+/* Universal GPU-accelerated lift hover. Uses individual translate so Framer's inline transforms cannot override it. */
 .rc-lift {
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  translate: 0 0;
+  transform: translateZ(0);
+  will-change: transform, opacity, translate;
+  transition: translate 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
   backface-visibility: hidden;
 }
-.rc-lift:hover {
-  transform: translate3d(0, -6px, 0);
+.rc-lift:hover,
+.rc-lift:focus-within {
+  translate: 0 -6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rc-lift {
+    transition: none;
+  }
 }

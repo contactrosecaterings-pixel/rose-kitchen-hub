@@ -43,24 +43,27 @@ export function SiteNav() {
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
-          className={`relative z-[10000] flex h-10 w-10 items-center justify-center rounded-full md:hidden ${open ? "text-neutral-900" : "text-foreground"}`}
+          className="relative z-[10000] flex h-11 w-11 translate-z-0 items-center justify-center rounded-full text-foreground md:hidden"
           onClick={() => setOpen((v) => !v)}
+          style={{ color: open ? "oklch(0.22 0.02 60)" : "var(--color-foreground)", opacity: 1, visibility: "visible", willChange: "transform" }}
         >
-          <span className="relative block h-4 w-6">
+          <span className="relative block h-4 w-6 opacity-100" style={{ transform: "translate3d(0,0,0)" }}>
             <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
               style={{
+                backgroundColor: "currentColor",
                 top: open ? "50%" : 0,
                 transform: open ? "translateY(-50%) rotate(45deg)" : "translateY(0) rotate(0)",
               }}
             />
             <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-opacity duration-200 ease-out"
-              style={{ top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
+              className="absolute left-0 right-0 block h-[2px] rounded-full transition-opacity duration-200 ease-out"
+              style={{ backgroundColor: "currentColor", top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
             />
             <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
               style={{
+                backgroundColor: "currentColor",
                 bottom: open ? "50%" : 0,
                 transform: open ? "translateY(50%) rotate(-45deg)" : "translateY(0) rotate(0)",
               }}
