@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { Star } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { Quote, Star } from "lucide-react";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
-import biryaniImg from "@/assets/dish-biryani.jpg";
+import biryaniImg from "@/assets/dish-biryani-fresh.jpg";
 import behariImg from "@/assets/dish-behari.jpg";
+import reviewFamily from "@/assets/review-family.jpg";
+import reviewBuffet from "@/assets/review-buffet.jpg";
+import reviewPlatter from "@/assets/review-platter.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,19 +49,22 @@ const specialties = [
 const reviews = [
   {
     name: "Ayesha K.",
-    img: biryaniImg,
+    role: "Wedding · 220 guests",
+    img: reviewFamily,
     comment:
       "Rose Caterings made our wedding unforgettable. The biryani was perfectly spiced and every guest raved about the food. Setup was elegant and the team was incredibly professional.",
   },
   {
     name: "Omar R.",
-    img: nihariImg,
+    role: "Aqeeqah · Family gathering",
+    img: reviewBuffet,
     comment:
       "We hired them for our son's aqeeqah and the nihari tasted just like my grandmother used to make. Authentic, generous portions, and served with so much care.",
   },
   {
     name: "Sarah M.",
-    img: behariImg,
+    role: "Corporate event · 80 guests",
+    img: reviewPlatter,
     comment:
       "Catered our corporate event for 80 guests. Punctual, clean presentation, and the behari boti was the talk of the office for weeks. Will book again without hesitation.",
   },
@@ -69,26 +75,28 @@ function Index() {
     hidden: { opacity: 0, y: 24 },
     show: { opacity: 1, y: 0 },
   };
-  const [heroLoaded, setHeroLoaded] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], [0, 120]);
+  const heroScale = useTransform(scrollY, [0, 600], [1, 1.08]);
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate overflow-hidden">
+      <section ref={heroRef} className="relative isolate overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-foreground" />
-        <img
-          src={heroImg}
-          alt="An overhead spread of authentic Pakistani dishes"
-          width={1600}
-          height={1024}
-          onLoad={() => setHeroLoaded(true)}
-          style={{
-            opacity: heroLoaded ? 1 : 0,
-            transform: heroLoaded ? "scale(1)" : "scale(1.04)",
-            transition: "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1100ms cubic-bezier(0.22,1,0.36,1)",
-            willChange: "opacity, transform",
-          }}
-          className="absolute inset-0 -z-10 h-full w-full object-cover"
-        />
+        <motion.div
+          className="absolute inset-0 -z-10"
+          style={{ y: heroY, scale: heroScale, willChange: "transform" }}
+        >
+          <SmoothImage
+            src={heroImg}
+            alt="An overhead spread of authentic Pakistani dishes"
+            width={1600}
+            height={1024}
+            priority
+            className="h-full w-full object-cover"
+          />
+        </motion.div>
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/80" />
         <motion.div
           initial="hidden"
@@ -182,7 +190,7 @@ function Index() {
               className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-lg"
             >
               <div className="aspect-[4/3] overflow-hidden bg-secondary">
-                <SpecialtyImage src={dish.img} alt={dish.name} />
+                <ParallaxImage src={dish.img} alt={dish.name} />
               </div>
               <div className="p-7">
                 <h3 className="font-display text-2xl text-foreground">{dish.name}</h3>
@@ -204,9 +212,9 @@ function Index() {
       </section>
 
       {/* REVIEWS */}
-      <section className="border-t border-border/60 bg-secondary/30 py-24">
+      <section className="border-t border-border/60 bg-gradient-to-b from-secondary/20 via-secondary/40 to-secondary/20 py-28">
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
-          <div className="mb-14 text-center">
+          <div className="mb-16 text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
               Kind Words
             </p>
@@ -214,34 +222,50 @@ function Index() {
               Loved by families &amp; hosts
             </h2>
           </div>
-          <div className="grid gap-8 md:grid-cols-3">
-            {reviews.map((r) => (
-              <article
+          <div className="grid gap-8 md:grid-cols-3 md:items-start">
+            {reviews.map((r, i) => (
+              <motion.article
                 key={r.name}
-                className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className={[
+                  "relative flex flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm",
+                  i === 1 ? "md:mt-10" : "",
+                  i === 2 ? "md:-mt-4" : "",
+                ].join(" ")}
               >
-                <div className="aspect-[4/3] overflow-hidden bg-secondary">
-                  <img
-                    src={r.img}
-                    alt={`Catering by Rose Caterings — reviewed by ${r.name}`}
-                    loading="lazy"
-                    width={1024}
-                    height={768}
-                    className="h-full w-full object-cover"
-                  />
+                <Quote
+                  aria-hidden
+                  className="absolute -top-1 right-5 h-16 w-16 text-primary/10"
+                  strokeWidth={1.5}
+                />
+                <div
+                  className={[
+                    "relative overflow-hidden rounded-2xl bg-secondary",
+                    i === 0 ? "aspect-[5/4]" : "",
+                    i === 1 ? "aspect-[4/5]" : "",
+                    i === 2 ? "aspect-[5/3]" : "",
+                  ].join(" ")}
+                >
+                  <ParallaxImage src={r.img} alt={`Catering by Rose Caterings — reviewed by ${r.name}`} />
                 </div>
-                <div className="flex flex-1 flex-col p-7">
-                  <div className="flex gap-1 text-[#d4a84c]">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    "{r.comment}"
+                <div className="mt-6 flex items-center gap-1 text-[#d4a84c]">
+                  {Array.from({ length: 5 }).map((_, idx) => (
+                    <Star key={idx} className="h-[18px] w-[18px] fill-current" strokeWidth={0} />
+                  ))}
+                </div>
+                <p className="mt-4 flex-1 font-display text-[17px] italic leading-relaxed text-foreground/90">
+                  &ldquo;{r.comment}&rdquo;
+                </p>
+                <div className="mt-6 border-t border-primary/15 pt-4">
+                  <p className="font-display text-lg text-foreground">{r.name}</p>
+                  <p className="mt-0.5 text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                    {r.role}
                   </p>
-                  <p className="mt-5 font-display text-lg text-foreground">{r.name}</p>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </div>
@@ -250,23 +274,66 @@ function Index() {
   );
 }
 
-function SpecialtyImage({ src, alt }: { src: string; alt: string }) {
+function SmoothImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+  priority?: boolean;
+}) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <img
+    <motion.img
       src={src}
       alt={alt}
-      loading="lazy"
-      width={1024}
-      height={768}
+      width={width}
+      height={height}
+      loading={priority ? "eager" : "lazy"}
+      decoding="async"
+      fetchPriority={priority ? "high" : "low"}
       onLoad={() => setLoaded(true)}
-      style={{
-        opacity: loaded ? 1 : 0,
-        transform: loaded ? "scale(1)" : "scale(1.03)",
-        transition: "opacity 900ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1)",
-        willChange: "opacity, transform",
-      }}
-      className="h-full w-full object-cover"
+      initial={false}
+      animate={{ opacity: loaded ? 1 : 0 }}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      style={{ willChange: "opacity", backfaceVisibility: "hidden" }}
+      className={className}
     />
+  );
+}
+
+function ParallaxImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+  return (
+    <div ref={ref} className="absolute inset-0 overflow-hidden">
+      <motion.img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
+        width={1024}
+        height={768}
+        onLoad={() => setLoaded(true)}
+        initial={false}
+        animate={{ opacity: loaded ? 1 : 0 }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        style={{ y, scale: 1.12, willChange: "transform, opacity", backfaceVisibility: "hidden" }}
+        className="h-full w-full object-cover"
+      />
+    </div>
   );
 }
