@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion } from "framer-motion";
 
 const links = [
   { to: "/", label: "Home" },
@@ -48,24 +47,23 @@ export function SiteNav() {
           onClick={() => setOpen((v) => !v)}
         >
           <span className="relative block h-4 w-6">
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              initial={false}
-              animate={open ? { top: "50%", y: "-50%", rotate: 45 } : { top: 0, y: 0, rotate: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              style={{
+                top: open ? "50%" : 0,
+                transform: open ? "translateY(-50%) rotate(45deg)" : "translateY(0) rotate(0)",
+              }}
             />
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              animate={open ? { opacity: 0 } : { opacity: 1, top: "50%", y: "-50%" }}
-              initial={false}
-              style={{ top: "50%", y: "-50%" }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-opacity duration-200 ease-out"
+              style={{ top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
             />
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              initial={false}
-              animate={open ? { bottom: "50%", y: "50%", rotate: -45 } : { bottom: 0, y: 0, rotate: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              style={{
+                bottom: open ? "50%" : 0,
+                transform: open ? "translateY(50%) rotate(-45deg)" : "translateY(0) rotate(0)",
+              }}
             />
           </span>
         </button>
@@ -73,35 +71,17 @@ export function SiteNav() {
 
       <div
         aria-hidden={!open}
-        className="fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white md:hidden"
-        style={{
-          opacity: open ? 1 : 0,
-          visibility: open ? "visible" : "hidden",
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), visibility 360ms",
-          willChange: "opacity, transform",
-          transform: "translate3d(0,0,0)",
-        }}
+        className={[
+          "fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
+          open
+            ? "visible opacity-100 pointer-events-auto"
+            : "invisible opacity-0 pointer-events-none",
+        ].join(" ")}
+        style={{ willChange: "opacity", transform: "translate3d(0,0,0)" }}
       >
-        <motion.nav
-          initial={false}
-          animate={open ? "open" : "closed"}
-          variants={{
-            open: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } },
-            closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
-          }}
-          className="flex h-full flex-col gap-2 px-8 pb-12 pt-28"
-        >
+        <nav className="flex h-full flex-col gap-2 px-8 pb-12 pt-28">
           {links.map((l) => (
-            <motion.div
-              key={l.to}
-              variants={{
-                open: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
-                closed: { opacity: 0, y: -16, transition: { duration: 0.2 } },
-              }}
-              style={{ willChange: "transform, opacity" }}
-              className="border-b border-neutral-200"
-            >
+            <div key={l.to} className="border-b border-neutral-200">
               <Link
                 to={l.to}
                 activeOptions={{ exact: l.to === "/" }}
@@ -111,9 +91,9 @@ export function SiteNav() {
               >
                 {l.label}
               </Link>
-            </motion.div>
+            </div>
           ))}
-        </motion.nav>
+        </nav>
       </div>
     </header>
   );

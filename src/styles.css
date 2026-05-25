@@ -155,3 +155,14 @@
     letter-spacing: -0.01em;
   }
 }
+
+/* Universal GPU-accelerated lift hover. Applied to all hoverable cards. */
+.rc-lift {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  backface-visibility: hidden;
+}
+.rc-lift:hover {
+  transform: translate3d(0, -6px, 0);
+}
