@@ -21,6 +21,16 @@ export function SiteNav() {
 
   useEffect(() => {
     if (!open) return;
+    let themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    let createdMeta = false;
+    if (!themeMeta) {
+      themeMeta = document.createElement("meta");
+      themeMeta.name = "theme-color";
+      document.head.appendChild(themeMeta);
+      createdMeta = true;
+    }
+    const prevTheme = themeMeta.content;
+    themeMeta.content = "#ffffff";
     const { body, documentElement: html } = document;
     const scrollY = window.scrollY;
     const prev = {
@@ -54,6 +64,11 @@ export function SiteNav() {
       html.style.overscrollBehavior = prev.htmlOverscroll;
       body.style.overscrollBehavior = prev.bodyOverscroll;
       window.scrollTo(0, scrollY);
+      if (createdMeta) {
+        themeMeta?.remove();
+      } else if (themeMeta) {
+        themeMeta.content = prevTheme;
+      }
     };
   }, [open]);
 
