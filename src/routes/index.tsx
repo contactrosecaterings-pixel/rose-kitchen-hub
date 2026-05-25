@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Star } from "lucide-react";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
@@ -211,15 +211,10 @@ function Index() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm will-change-transform hover:translate-y-[-6px] hover:shadow-lg"
-              style={{
-                transform: "translate3d(0,0,0)",
-                transition:
-                  "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease",
-              }}
+              className="rc-lift group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm hover:shadow-lg"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
-                <ParallaxImage src={dish.img} alt={dish.name} />
+                <ParallaxImage src={dish.img} alt={dish.name} eager />
               </div>
               <div className="p-7">
                 <h3 className="font-display text-2xl text-foreground">{dish.name}</h3>
@@ -260,15 +255,10 @@ function Index() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 className={[
-                  "relative flex w-[85vw] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm will-change-transform hover:translate-y-[-6px] hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] md:w-auto md:shrink md:snap-align-none",
+                  "rc-lift relative flex w-[85vw] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] md:w-auto md:shrink md:snap-align-none",
                   i === 1 ? "md:mt-10" : "",
                   i === 2 ? "md:-mt-4" : "",
                 ].join(" ")}
-                style={{
-                  transform: "translate3d(0,0,0)",
-                  transition:
-                    "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease",
-                }}
               >
                 <div
                   className={[
