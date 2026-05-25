@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { SiteNav } from "@/components/site-nav";
@@ -136,10 +136,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  // Key on the RESOLVED location so the page-transition animation only runs
-  // once the new route chunk has finished loading. Using the pending pathname
-  // makes the first visit (when the chunk is still loading) appear to snap in
-  // because the animation completes before the content mounts.
   const pathname = useRouterState({ select: (s) => s.resolvedLocation?.pathname ?? s.location.pathname });
 
   return (
@@ -147,14 +143,17 @@ function RootComponent() {
       <div className="flex min-h-screen flex-col">
         <SiteNav />
         <main className="flex-1">
-          <motion.div
-            key={pathname}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <Outlet />
-          </motion.div>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
         <SiteFooter />
       </div>
