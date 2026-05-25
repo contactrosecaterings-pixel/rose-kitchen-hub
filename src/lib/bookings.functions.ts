@@ -7,7 +7,7 @@ const BookingSchema = z.object({
   email: z.string().trim().email().max(255),
   phone: z.string().trim().min(5).max(40),
   event_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guest_count: z.enum(["10-25", "26-50"]),
+  guest_count: z.number().int().min(10).max(100),
   event_type: z.enum([
     "Wedding",
     "Aqeeqah",
@@ -19,7 +19,11 @@ const BookingSchema = z.object({
   service_type: z.enum(["Drop-off Delivery", "Pickup", "Full-Service Catering"]),
   preferred_dishes: z.array(z.string().min(1).max(80)).max(60).default([]),
   allergies: z.string().max(2000).optional().default(""),
-  preferred_call_time: z.enum(["Morning", "Afternoon", "Evening"]),
+  preferred_call_time: z.enum([
+    "Morning (9 AM – 12 PM)",
+    "Afternoon (12 PM – 5 PM)",
+    "Evening (5 PM – 8 PM)",
+  ]),
 });
 
 export const submitBooking = createServerFn({ method: "POST" })
@@ -32,7 +36,7 @@ export const submitBooking = createServerFn({ method: "POST" })
         email: data.email,
         phone: data.phone,
         event_date: data.event_date,
-        guest_count: data.guest_count,
+        guest_count: String(data.guest_count),
         event_type: data.event_type,
         service_type: data.service_type,
         preferred_dishes: data.preferred_dishes,
@@ -63,7 +67,7 @@ export const submitBooking = createServerFn({ method: "POST" })
         phone: data.phone,
         email: data.email,
         eventDate: data.event_date,
-        guestCount: data.guest_count,
+        guestCount: `${data.guest_count} guests`,
         eventType: data.event_type,
         serviceType: data.service_type,
         preferredCallTime: data.preferred_call_time,

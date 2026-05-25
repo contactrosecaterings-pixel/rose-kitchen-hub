@@ -7,12 +7,18 @@ export const MENU: MenuCategory[] = [
   {
     group: "Main Course",
     sections: [
-      { name: "Karahi & Nihari Dishes", items: ["Karahi", "Nihari", "Shank Nihari"] },
+      {
+        name: "Karahi & Nihari Dishes",
+        items: ["Chicken Karhai", "Chicken Nihari", "Lamb Shank Nihari"],
+      },
       {
         name: "Traditional Curries",
         items: ["Chikar Cholay", "Gobi Aloo", "Palak Aloo", "Saag", "Bhindi"],
       },
-      { name: "Rice Dishes", items: ["Biryani", "Pulao", "Shank Pulao"] },
+      {
+        name: "Rice Dishes",
+        items: ["Chicken Biryani", "Chicken Pulao", "Lamb Shank Pulao"],
+      },
       {
         name: "BBQ & Grilled",
         items: ["Tikka Boti", "Tikka Leg", "Seekh Kabab", "Behari Boti"],
@@ -23,9 +29,10 @@ export const MENU: MenuCategory[] = [
   {
     group: "Sides & Sweets",
     sections: [
+      { name: "Appetizers", items: ["Samosas (Chicken, Beef, or Potato)"] },
       { name: "Breads", items: ["Roti", "Naan", "Butter Naan", "Garlic Naan"] },
-      { name: "Sauces", items: ["Raita", "Chutney"] },
-      { name: "Desserts", items: ["Gulab Jamun", "Kheer"] },
+      { name: "Sauces", items: ["Raita", "Chutney", "Hummus"] },
+      { name: "Desserts", items: ["Kheer", "Kulfi"] },
     ],
   },
 ];
