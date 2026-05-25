@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { MENU } from "@/lib/menu-data";
 
@@ -14,13 +14,7 @@ export const Route = createFileRoute("/menu")({
 });
 
 function MenuPage() {
-  const words = ["home", "culture", "tradition", "Pakistan"];
-  const [wordIndex, setWordIndex] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setWordIndex((i) => (i + 1) % words.length), 2400);
-    return () => clearInterval(id);
-  }, []);
-  const activeWord = words[wordIndex];
+  const typed = useTypewriter(["home", "culture", "tradition", "Pakistan"]);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
@@ -28,30 +22,23 @@ function MenuPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Our Menu</p>
         <h1 className="mt-3 inline-flex flex-wrap items-baseline justify-center font-display text-5xl text-foreground">
           <span>A taste of&nbsp;</span>
-          <motion.span
-            layout
-            transition={{ type: "spring", stiffness: 220, damping: 26 }}
-            className="relative inline-block overflow-hidden align-baseline text-primary"
-            style={{ lineHeight: 1.1 }}
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span
-                key={activeWord}
-                initial={{ y: 18, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -18, opacity: 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="inline-block whitespace-nowrap"
-              >
-                {activeWord}
-              </motion.span>
-            </AnimatePresence>
-          </motion.span>
+          <span className="inline-flex items-baseline text-primary" style={{ lineHeight: 1.1 }}>
+            <span className="whitespace-nowrap">{typed}</span>
+            <span
+              aria-hidden
+              className="ml-0.5 inline-block w-[2px] self-stretch bg-primary"
+              style={{ animation: "rc-caret-blink 1s steps(2) infinite" }}
+            />
+          </span>
         </h1>
+        <p className="mt-5 inline-block rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+          100% Halal
+        </p>
         <p className="mx-auto mt-5 max-w-2xl rounded-2xl border border-primary/30 bg-secondary/60 px-6 py-4 text-sm font-medium text-foreground">
           All items can be customized upon request. Contact us for a custom quote.
         </p>
       </header>
+      <style>{`@keyframes rc-caret-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }`}</style>
       <div className="space-y-16">
         {MENU.map((group) => (
           <section key={group.group}>
@@ -70,8 +57,8 @@ function MenuPage() {
                   <h3 className="font-display text-xl text-primary">{section.name}</h3>
                   <ul className="mt-4 space-y-2">
                     {section.items.map((item) => (
-                      <li key={item} className="flex items-center text-sm text-foreground">
-                        <span className="mr-3 h-1.5 w-1.5 rounded-full bg-primary/70" />
+                      <li key={item} className="flex items-start text-sm leading-relaxed text-foreground">
+                        <span className="mr-3 mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary/70" />
                         {item}
                       </li>
                     ))}
@@ -84,4 +71,48 @@ function MenuPage() {
       </div>
     </div>
   );
+}
+
+function useTypewriter(
+  words: string[],
+  {
+    typeSpeed = 90,
+    deleteSpeed = 55,
+    holdAfterType = 1400,
+    holdAfterDelete = 450,
+  }: { typeSpeed?: number; deleteSpeed?: number; holdAfterType?: number; holdAfterDelete?: number } = {},
+) {
+  const [text, setText] = useState("");
+  const [wordIdx, setWordIdx] = useState(0);
+  const [phase, setPhase] = useState<"typing" | "holding" | "deleting" | "paused">("typing");
+
+  useEffect(() => {
+    const current = words[wordIdx];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (phase === "typing") {
+      if (text.length < current.length) {
+        timeout = setTimeout(() => setText(current.slice(0, text.length + 1)), typeSpeed);
+      } else {
+        timeout = setTimeout(() => setPhase("holding"), holdAfterType);
+      }
+    } else if (phase === "holding") {
+      timeout = setTimeout(() => setPhase("deleting"), 0);
+    } else if (phase === "deleting") {
+      if (text.length > 0) {
+        timeout = setTimeout(() => setText(text.slice(0, -1)), deleteSpeed);
+      } else {
+        timeout = setTimeout(() => setPhase("paused"), holdAfterDelete);
+      }
+    } else if (phase === "paused") {
+      timeout = setTimeout(() => {
+        setWordIdx((i) => (i + 1) % words.length);
+        setPhase("typing");
+      }, 0);
+    }
+
+    return () => clearTimeout(timeout);
+  }, [text, phase, wordIdx, words, typeSpeed, deleteSpeed, holdAfterType, holdAfterDelete]);
+
+  return text;
 }
