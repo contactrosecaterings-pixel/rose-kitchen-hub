@@ -14,26 +14,33 @@ export const Route = createFileRoute("/menu")({
 });
 
 function MenuPage() {
-  const typed = useTypewriter(["home", "culture", "tradition", "Pakistan"]);
+  const words = ["home", "culture", "tradition", "Pakistan"];
+  const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
+  const typed = useTypewriter(words);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-20 lg:px-10">
       <header className="mb-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Our Menu</p>
-        <h1 className="mt-3 inline-flex flex-wrap items-baseline justify-center font-display text-5xl text-foreground">
-          <span>A taste of&nbsp;</span>
-          <span className="inline-flex items-baseline text-primary" style={{ lineHeight: 1.1 }}>
-            <span className="whitespace-nowrap">{typed}</span>
+        <p className="mt-4 inline-block rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">
+          [ ✨ 100% Halal Certified ]
+        </p>
+        <h1 className="mt-6 font-display text-5xl text-foreground sm:text-6xl">
+          <span className="inline-flex flex-wrap items-baseline justify-center gap-x-3">
+            <span>A taste of</span>
             <span
-              aria-hidden
-              className="ml-1 inline-block w-[3px] bg-primary"
-              style={{ height: "0.9em", animation: "rc-caret-blink 1s steps(2) infinite" }}
-            />
+              className="relative inline-block text-left text-primary"
+              style={{ minWidth: `${longest.length}ch`, lineHeight: 1.1 }}
+            >
+              <span className="whitespace-nowrap">{typed}</span>
+              <span
+                aria-hidden
+                className="ml-[2px] inline-block w-[3px] translate-y-[2px] bg-primary align-middle"
+                style={{ height: "0.85em", animation: "rc-caret-blink 1s steps(2) infinite" }}
+              />
+            </span>
           </span>
         </h1>
-        <p className="mt-5 inline-block rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.3em] text-primary">
-          100% Halal
-        </p>
         <p className="mx-auto mt-5 max-w-2xl rounded-2xl border border-primary/30 bg-secondary/60 px-6 py-4 text-sm font-medium text-foreground">
           All items can be customized upon request. Contact us for a custom quote.
         </p>
