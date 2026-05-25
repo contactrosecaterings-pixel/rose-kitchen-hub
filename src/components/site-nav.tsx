@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link, useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 const links = [
   { to: "/", label: "Home" },
@@ -10,7 +10,15 @@ const links = [
 ] as const;
 
 export function SiteNav() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    links.forEach((link) => {
+      void router.preloadRoute({ to: link.to });
+    });
+  }, [router]);
+
   return (
     <header className="sticky top-0 z-[60] border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
