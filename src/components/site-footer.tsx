@@ -18,7 +18,9 @@ export function SiteFooter() {
             Service Area
           </p>
           <p className="mt-3 text-sm text-foreground">
-            Paris · Brantford · Greater Toronto Area
+            Greater Toronto Area (GTA)
+            <span className="mx-2 text-muted-foreground">|</span>
+            Brant County &amp; Surroundings
           </p>
         </div>
         <div>

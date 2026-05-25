@@ -9,7 +9,7 @@ export const MENU: MenuCategory[] = [
     sections: [
       {
         name: "Karahi & Nihari Dishes",
-        items: ["Chicken Karhai", "Chicken Nihari", "Lamb Shank Nihari"],
+        items: ["Karhai (Chicken or Lamb)", "Nihari (Chicken or Lamb Shank)"],
       },
       {
         name: "Traditional Curries",
@@ -17,7 +17,7 @@ export const MENU: MenuCategory[] = [
       },
       {
         name: "Rice Dishes",
-        items: ["Chicken Biryani", "Chicken Pulao", "Lamb Shank Pulao"],
+        items: ["Chicken Biryani", "Pulao (Chicken or Lamb Shank)"],
       },
       {
         name: "BBQ & Grilled",

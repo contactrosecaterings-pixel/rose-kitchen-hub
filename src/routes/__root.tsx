@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Premium, authentic Pakistani home-cooked catering for weddings, aqeeqahs, Eid events, and family gatherings. Serving Paris, Brantford, and the GTA.",
+          "Premium, authentic Pakistani home-cooked catering for weddings, aqeeqahs, Eid events, and family gatherings. Serving the Greater Toronto Area (GTA) and Brant County & Surroundings.",
       },
       { name: "author", content: "Rose Caterings" },
       { property: "og:title", content: "Rose Caterings" },
       {
         property: "og:description",
         content:
-          "Authentic Pakistani home-cooked catering for events across Paris, Brantford, and the GTA.",
+          "Authentic Pakistani home-cooked catering for events across the Greater Toronto Area (GTA) and Brant County & Surroundings.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
