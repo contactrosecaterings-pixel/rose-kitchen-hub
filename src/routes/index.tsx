@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Star } from "lucide-react";
 import heroImg from "@/assets/hero-feast.jpg";
 import nihariImg from "@/assets/dish-nihari.jpg";
 import biryaniImg from "@/assets/dish-biryani.jpg";
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Premium, authentic Pakistani home-cooked catering for weddings, aqeeqahs, Eid events and family gatherings across Paris, Brantford and the GTA.",
+          "Premium, 100% Halal authentic Pakistani home-cooked catering for weddings, aqeeqahs, Eid events and family gatherings across the GTA and Brant County.",
       },
     ],
   }),
@@ -42,6 +43,27 @@ const specialties = [
   },
 ];
 
+const reviews = [
+  {
+    name: "Ayesha K.",
+    img: biryaniImg,
+    comment:
+      "Rose Caterings made our wedding unforgettable. The biryani was perfectly spiced and every guest raved about the food. Setup was elegant and the team was incredibly professional.",
+  },
+  {
+    name: "Omar R.",
+    img: nihariImg,
+    comment:
+      "We hired them for our son's aqeeqah and the nihari tasted just like my grandmother used to make. Authentic, generous portions, and served with so much care.",
+  },
+  {
+    name: "Sarah M.",
+    img: behariImg,
+    comment:
+      "Catered our corporate event for 80 guests. Punctual, clean presentation, and the behari boti was the talk of the office for weeks. Will book again without hesitation.",
+  },
+];
+
 function Index() {
   const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -52,16 +74,19 @@ function Index() {
     <>
       {/* HERO */}
       <section className="relative isolate overflow-hidden">
-        <motion.img
+        <div className="absolute inset-0 -z-10 bg-foreground" />
+        <img
           src={heroImg}
           alt="An overhead spread of authentic Pakistani dishes"
           width={1600}
           height={1024}
           onLoad={() => setHeroLoaded(true)}
-          initial={{ opacity: 0, scale: 1.04 }}
-          animate={heroLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.04 }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          style={{ willChange: "opacity, transform" }}
+          style={{
+            opacity: heroLoaded ? 1 : 0,
+            transform: heroLoaded ? "scale(1)" : "scale(1.04)",
+            transition: "opacity 1100ms cubic-bezier(0.22,1,0.36,1), transform 1100ms cubic-bezier(0.22,1,0.36,1)",
+            willChange: "opacity, transform",
+          }}
           className="absolute inset-0 -z-10 h-full w-full object-cover"
         />
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-foreground/70 via-foreground/55 to-foreground/80" />
@@ -86,6 +111,13 @@ function Index() {
             Premium Pakistani catering,<br />
             crafted the way it was meant to be.
           </motion.h1>
+          <motion.p
+            variants={fadeUp}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="mx-auto mt-6 inline-block rounded-full border border-background/40 bg-background/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-background backdrop-blur-sm"
+          >
+            100% Halal Authentic Pakistani Catering
+          </motion.p>
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -120,7 +152,7 @@ function Index() {
             <p className="font-display text-2xl text-foreground sm:text-3xl">
               Greater Toronto Area (GTA)
             </p>
-            <span className="hidden h-6 w-px bg-border sm:block" aria-hidden />
+            <span className="hidden text-2xl text-muted-foreground sm:block" aria-hidden>|</span>
             <p className="font-display text-2xl text-foreground sm:text-3xl">
               Brant County &amp; Surroundings
             </p>
@@ -170,6 +202,50 @@ function Index() {
           </Link>
         </div>
       </section>
+
+      {/* REVIEWS */}
+      <section className="border-t border-border/60 bg-secondary/30 py-24">
+        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+          <div className="mb-14 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
+              Kind Words
+            </p>
+            <h2 className="mt-3 font-display text-4xl text-foreground sm:text-5xl">
+              Loved by families &amp; hosts
+            </h2>
+          </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {reviews.map((r) => (
+              <article
+                key={r.name}
+                className="flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm"
+              >
+                <div className="aspect-[4/3] overflow-hidden bg-secondary">
+                  <img
+                    src={r.img}
+                    alt={`Catering by Rose Caterings — reviewed by ${r.name}`}
+                    loading="lazy"
+                    width={1024}
+                    height={768}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col p-7">
+                  <div className="flex gap-1 text-[#d4a84c]">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    "{r.comment}"
+                  </p>
+                  <p className="mt-5 font-display text-lg text-foreground">{r.name}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }
@@ -177,17 +253,19 @@ function Index() {
 function SpecialtyImage({ src, alt }: { src: string; alt: string }) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <motion.img
+    <img
       src={src}
       alt={alt}
       loading="lazy"
       width={1024}
       height={768}
       onLoad={() => setLoaded(true)}
-      initial={{ opacity: 0, scale: 1.03 }}
-      animate={loaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 1.03 }}
-      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-      style={{ willChange: "opacity, transform" }}
+      style={{
+        opacity: loaded ? 1 : 0,
+        transform: loaded ? "scale(1)" : "scale(1.03)",
+        transition: "opacity 900ms cubic-bezier(0.22,1,0.36,1), transform 900ms cubic-bezier(0.22,1,0.36,1)",
+        willChange: "opacity, transform",
+      }}
       className="h-full w-full object-cover"
     />
   );
