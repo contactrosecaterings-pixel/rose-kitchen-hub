@@ -8,7 +8,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Get in touch with Rose Caterings for authentic Pakistani home-cooked catering. Serving Paris, Brantford, and the GTA.",
+          "Get in touch with Rose Caterings for authentic Pakistani home-cooked catering. Serving the Greater Toronto Area (GTA) and Brant County & Surroundings.",
       },
     ],
   }),
@@ -56,7 +56,11 @@ function ContactPage() {
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Service Area
           </p>
-          <p className="mt-2 font-display text-2xl text-foreground">Paris · Brantford · GTA</p>
+          <p className="mt-2 font-display text-2xl text-foreground">
+            Greater Toronto Area (GTA)
+            <span className="mx-2 text-muted-foreground">|</span>
+            Brant County &amp; Surroundings
+          </p>
           <p className="mt-2 text-sm text-muted-foreground">
             Travel beyond available on request.
           </p>
