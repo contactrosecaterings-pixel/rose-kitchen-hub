@@ -47,24 +47,23 @@ export function SiteNav() {
           onClick={() => setOpen((v) => !v)}
         >
           <span className="relative block h-4 w-6">
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              initial={false}
-              animate={open ? { top: "50%", y: "-50%", rotate: 45 } : { top: 0, y: 0, rotate: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              style={{
+                top: open ? "50%" : 0,
+                transform: open ? "translateY(-50%) rotate(45deg)" : "translateY(0) rotate(0)",
+              }}
             />
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              animate={open ? { opacity: 0 } : { opacity: 1, top: "50%", y: "-50%" }}
-              initial={false}
-              style={{ top: "50%", y: "-50%" }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-opacity duration-200 ease-out"
+              style={{ top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
             />
-            <motion.span
-              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
-              initial={false}
-              animate={open ? { bottom: "50%", y: "50%", rotate: -45 } : { bottom: 0, y: 0, rotate: 0 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            <span
+              className="absolute left-0 right-0 block h-[2px] rounded-full bg-current transition-transform duration-300 ease-out"
+              style={{
+                bottom: open ? "50%" : 0,
+                transform: open ? "translateY(50%) rotate(-45deg)" : "translateY(0) rotate(0)",
+              }}
             />
           </span>
         </button>
