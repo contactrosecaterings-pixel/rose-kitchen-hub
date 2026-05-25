@@ -1,57 +1,48 @@
-## 1. Booking form (`src/routes/booking.tsx` + `src/lib/bookings.functions.ts`)
+## Goal
 
-**Guest count → numeric input**
-- Replace the `<PillGroup>` for guest count with `<Input type="number" min={10} max={100} placeholder="Minimum 10 guests">`.
-- `FormState.guest_count` becomes `number | "" ` (empty string for unset).
-- `canAdvance()` step 1 checks `typeof guest_count === "number" && guest_count >= 10 && guest_count <= 100`.
-- Zod `BookingSchema.guest_count`: `z.number().int().min(10).max(100)`.
-- Handler converts the number to a string before inserting (DB column is `text`) — e.g. `String(data.guest_count)` — and the emailed body shows `"<n> guests"`.
+Refresh homepage reviews + animations, fix menu page badge/typewriter, and add a new Chicken Biryani specialty image. Service area copy is already consistent — verify only.
 
-**Call time slots**
-- Options become: `"Morning (9 AM – 12 PM)"`, `"Afternoon (12 PM – 5 PM)"`, `"Evening (5 PM – 8 PM)"`.
-- `FormState.preferred_call_time` union + `BookingSchema.preferred_call_time` Zod enum updated to match exactly.
+## 1. New Chicken Biryani image
 
-## 2. Animations
+- Generate a fresh, high-appeal Chicken Biryani photo with `imagegen` (premium tier) → save to `src/assets/dish-biryani-fresh.jpg`.
+- Swap the import in `src/routes/index.tsx` so the Biryani specialty card uses the new asset. Leave Nihari/Behari untouched.
 
-**Homepage images** (`src/routes/index.tsx`)
-- Wrap hero/specialty images so they animate only `opacity`, `scale`, and `translate3d` (GPU-friendly). Set explicit `width`/`height` and reserved aspect-ratio containers so the image swap from blank → loaded doesn't reflow.
-- Use `onLoad` to drive a `motion.img` from `{opacity:0, scale:1.02}` → `{opacity:1, scale:1}` with a soft easing curve. Hero image starts the animation immediately on mount, specialty cards use `whileInView`.
-- Remove the existing layout-affecting `y` transform on the `<img>` itself (keep `y` only on text/cards, not images).
+## 2. Reviews section redesign (`src/routes/index.tsx`)
 
-**Menu page text cycler** (`src/routes/menu.tsx`)
-- Headline becomes `"A taste of "` + animated word.
-- Cycle through `["home", "culture", "tradition", "Pakistan"]` every ~2.4s.
-- Implement with Framer Motion `AnimatePresence` + `motion.span` (absolutely positioned inside a relatively-positioned inline-flex container whose width animates via `layout` so the surrounding text shifts smoothly).
-- Word transitions: enter from `y: 18, opacity: 0` → `y: 0, opacity: 1`; exit to `y: -18, opacity: 0`.
+- Replace the rigid 3-up card grid with a warmer layout:
+  - Wrap the section in an ivory/cream panel (`bg-[oklch(...)]` warm tone, defined alongside existing tokens) with soft layered shadows and `rounded-3xl` cards.
+  - Slight vertical offset / asymmetric alignment (middle card nudged down) so it doesn't read as a uniform grid.
+  - Use a quotation glyph, star row, italic quote, then name + role.
+- Generate 3 unique catering-themed images (family hands at a table, buffet spread, hot platter close-up) via `imagegen` → save under `src/assets/review-*.jpg`. No reuse of dish images.
+- Keep 5 gold stars, but vary card composition (one image-top, one image-side, one image-bottom) to avoid corporate uniformity while staying responsive.
 
-## 3. Menu data (`src/lib/menu-data.ts`)
+## 3. Menu page badge + typewriter (`src/routes/menu.tsx`)
 
-Replace contents with:
+- Remove the `100% Halal` pill from below the heading; place a new subtitle badge ABOVE the heading:  
+`[✨ 100% HALAL]` — small, uppercase, letter-spaced, centered, subtle border.
+- Rebuild typewriter from scratch:
+  - Reserve stable width via a hidden sizer span containing the longest word ("tradition") so the line never reflows.
+  - Cleaner state machine using a single `useEffect` with proper cleanup; cycle home → culture → tradition → Pakistan.
+  - Keep blinking caret, but use `inline-block` with fixed line-height to prevent baseline jumps.
 
-- **Main Course → Karahi & Nihari Dishes**: `Chicken Karhai`, `Chicken Nihari`, `Lamb Shank Nihari`
-- **Main Course → Rice Dishes**: `Chicken Biryani`, `Chicken Pulao`, `Lamb Shank Pulao` (only one biryani — Chicken)
-- Other Main Course sections unchanged (Traditional Curries, BBQ & Grilled, Keema Specials)
-- **Sides & Sweets → Sauces**: `Raita`, `Chutney`, `Hummus`
-- **New section under Sides & Sweets → Appetizers**: `Samosas (Chicken, Beef, or Potato)` — single item string so existing pill/list mapping keeps working; the parenthetical renders inline within the grid card.
-- **Sides & Sweets → Desserts**: `Kheer`, `Kulfi` (Gulab Jamun removed)
+## 4. Homepage animations rebuild (`src/routes/index.tsx`)
 
-`ALL_DISHES` export auto-updates via existing flatMap.
+- Delete current `onLoad` + inline-style fade logic (`SpecialtyImage`, hero `heroLoaded`).
+- New pipeline with Framer Motion:
+  - Each image wrapped in an aspect-ratio container with a solid `bg-secondary` skeleton placeholder.
+  - Use `motion.img` with `initial={{ opacity: 0 }}`, `animate={{ opacity: 1 }}` triggered by an `onLoad` → `setLoaded(true)` boolean, `transition={{ duration: 0.9, ease: [0.22,1,0.36,1] }}`. No transform-from-scale mid-flight (root cause of the blink).
+  - Add `decoding="async"` + `fetchPriority` ("high" for hero, "low" for below-fold).
+- Scroll parallax:
+  - Hero image: `useScroll` + `useTransform` → translateY range (e.g. 0 → -60px) tied to page scroll.
+  - Specialty cards: subtle `whileInView` y-translation (already present) refined with a small `useScroll`/`useTransform` on each image for gentle parallax inside its container.
+- All transforms use `translate3d` via Framer Motion's `style={{ y }}` for GPU acceleration; add `will-change-transform` class.
 
-## 4. Service area copy (`src/routes/index.tsx`)
+## 5. Service area copy
 
-Replace the single line `Paris · Brantford · Greater Toronto Area` with two equally-weighted lines (or a two-column flex on sm+):
+- Already consistent across hero, footer, contact, and root meta tags ("Greater Toronto Area (GTA) | Brant County & Surroundings"). About route has no service-area copy. No edits needed — just verify after build.
 
-```
-Greater Toronto Area (GTA)     Brant County & Surroundings
-```
+## Technical notes
 
-Both rendered with identical typography so neither dominates.
-
-## Type-safety audit
-
-- `FormState` updated in-place (no separate `src/types/form.ts` exists — booking.tsx owns the type).
-- Server `BookingSchema` updated in lockstep so the `submit({ data })` call site stays type-checked end-to-end.
-- DB column `bookings.guest_count` remains `text` (no migration needed); the server function stringifies the number before insert.
-- Menu changes don't touch any types — `MenuCategory` shape is preserved.
-
-No new packages, no DB migration, no auth changes.
+- No DB, no server function, no new packages (framer-motion already used).
+- New assets: `dish-biryani-fresh.jpg`, `review-family.jpg`, `review-buffet.jpg`, `review-platter.jpg` in `src/assets/`.
+- All color additions go through `src/styles.css` tokens (warm ivory panel token) — no raw hex in components.
