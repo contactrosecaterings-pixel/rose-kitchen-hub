@@ -15,7 +15,6 @@ export const Route = createFileRoute("/menu")({
 
 function MenuPage() {
   const words = ["home", "culture", "tradition", "Pakistan"];
-  const longest = words.reduce((a, b) => (a.length >= b.length ? a : b));
   const typed = useTypewriter(words);
 
   return (
@@ -27,14 +26,13 @@ function MenuPage() {
         </p>
         <h1 className="mt-6 font-display text-4xl text-foreground sm:text-6xl">
           <span
-            className="flex flex-col items-center justify-center gap-y-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3"
-            style={{ minHeight: "5.5rem", lineHeight: 1.15 }}
+            className="flex flex-col items-center justify-center gap-y-1 sm:inline-flex sm:flex-row sm:items-center sm:justify-center sm:gap-x-3"
+            style={{ lineHeight: 1.15 }}
           >
             <span>A taste of</span>
             <span
-              className="relative inline-flex items-baseline justify-center text-primary"
+              className="relative inline-flex items-center justify-center text-primary"
               style={{
-                minWidth: `${longest.length + 1}ch`,
                 minHeight: "1.2em",
                 lineHeight: 1.15,
               }}
@@ -65,8 +63,12 @@ function MenuPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ y: -3, scale: 1.01 }}
-                  className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+                  className="rounded-2xl border border-border/70 bg-card p-6 shadow-sm will-change-transform hover:translate-y-[-6px] hover:shadow-md"
+                  style={{
+                    transform: "translate3d(0,0,0)",
+                    transition:
+                      "transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease",
+                  }}
                 >
                   <h3 className="font-display text-xl text-primary">{section.name}</h3>
                   <ul className="mt-4 space-y-2">
