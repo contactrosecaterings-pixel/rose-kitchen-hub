@@ -82,7 +82,10 @@ function Index() {
   return (
     <>
       {/* HERO */}
-      <section ref={heroRef} className="relative isolate overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block"
+      >
         <div className="absolute inset-0 -z-10 bg-foreground" />
         <motion.div
           className="absolute inset-0 -z-10"
@@ -108,6 +111,8 @@ function Index() {
             className="absolute inset-0 h-full w-full object-cover"
             style={{ willChange: "transform", backfaceVisibility: "hidden" }}
           >
+            {/* To use a local asset, drop the file into /public and uncomment:
+            <source src="/hero-banner.mp4" type="video/mp4" /> */}
             <source
               src="https://videos.pexels.com/video-files/3196284/3196284-uhd_2560_1440_25fps.mp4"
               type="video/mp4"
@@ -122,19 +127,19 @@ function Index() {
           initial="hidden"
           animate="show"
           variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } } }}
-          className="mx-auto max-w-5xl px-6 py-32 text-center text-background lg:py-44"
+          className="mx-auto w-full max-w-5xl px-6 py-12 text-center text-background sm:py-20 lg:py-44"
         >
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-5 text-xs font-medium uppercase tracking-[0.35em] text-background/80"
+            className="mb-4 text-[10px] font-medium uppercase tracking-[0.35em] text-background/80 sm:mb-5 sm:text-xs"
           >
             Authentic · Heritage · Home-Cooked
           </motion.p>
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl"
+            className="font-display text-[2.25rem] leading-[1.08] sm:text-6xl lg:text-7xl"
           >
             Premium Pakistani catering,<br />
             crafted the way it was meant to be.
@@ -142,14 +147,14 @@ function Index() {
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-6 inline-block rounded-full border border-background/40 bg-background/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-background backdrop-blur-sm"
+            className="mx-auto mt-4 inline-block rounded-full border border-background/40 bg-background/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-background backdrop-blur-sm sm:mt-6 sm:px-5 sm:py-2 sm:text-xs"
           >
             100% Halal Authentic Pakistani Catering
           </motion.p>
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-background/85 sm:text-lg"
+            className="mx-auto mt-4 hidden max-w-2xl text-base leading-relaxed text-background/85 sm:mt-6 sm:block sm:text-lg"
           >
             Traditional spice blends, slow-cooking methods, and recipes handed down
             through generations — brought to your wedding, aqeeqah, Eid event,
@@ -158,11 +163,11 @@ function Index() {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10"
+            className="mt-6 sm:mt-10"
           >
             <Link
               to="/booking"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:brightness-105"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:brightness-105 sm:px-8 sm:py-4 sm:text-base"
             >
               Book a Catering Inquiry
             </Link>
@@ -206,8 +211,12 @@ function Index() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-1.5 hover:shadow-lg will-change-transform"
-              style={{ transform: "translate3d(0,0,0)" }}
+              className="group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm will-change-transform hover:translate-y-[-6px] hover:shadow-lg"
+              style={{
+                transform: "translate3d(0,0,0)",
+                transition:
+                  "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+              }}
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                 <ParallaxImage src={dish.img} alt={dish.name} />
@@ -242,7 +251,7 @@ function Index() {
               Loved by families &amp; hosts
             </h2>
           </div>
-          <div className="grid gap-8 md:grid-cols-3 md:items-start">
+          <div className="-mx-6 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0">
             {reviews.map((r, i) => (
               <motion.article
                 key={r.name}
@@ -251,11 +260,15 @@ function Index() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.7, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 className={[
-                  "relative flex flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm transition-[transform,box-shadow] duration-300 ease-out hover:-translate-y-2 hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] will-change-transform",
+                  "relative flex w-[85%] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm will-change-transform hover:translate-y-[-6px] hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] md:w-auto md:shrink md:snap-align-none",
                   i === 1 ? "md:mt-10" : "",
                   i === 2 ? "md:-mt-4" : "",
                 ].join(" ")}
-                style={{ transform: "translate3d(0,0,0)" }}
+                style={{
+                  transform: "translate3d(0,0,0)",
+                  transition:
+                    "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                }}
               >
                 <div
                   className={[
