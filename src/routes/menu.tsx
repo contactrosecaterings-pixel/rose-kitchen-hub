@@ -27,8 +27,7 @@ function MenuPage() {
             <span
               aria-hidden
               className="ml-1 inline-block w-[3px] bg-primary"
-              style={{ animation: "rc-caret-blink 1s steps(2) infinite" }}
-              style-ignore
+              style={{ height: "0.9em", animation: "rc-caret-blink 1s steps(2) infinite" }}
             />
           </span>
         </h1>
