@@ -17,7 +17,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   return (
-    <div className="mx-auto max-w-5xl px-6 py-24">
+    <div className="mx-auto w-full max-w-5xl px-4 py-24 sm:px-6">
       <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
         Contact
       </p>
@@ -26,7 +26,7 @@ function ContactPage() {
         Prefer to talk it through? Reach us directly — we typically respond within 24–48 hours.
       </p>
 
-      <div className="mt-14 grid gap-6 md:grid-cols-3">
+      <div className="mx-auto mt-14 grid w-full max-w-xl gap-6 md:max-w-none md:grid-cols-3">
         <a
           href="tel:+14374101212"
           className="group rounded-2xl border border-border/70 bg-card p-8 transition-all hover:border-primary/50 hover:shadow-md"
@@ -51,12 +51,12 @@ function ContactPage() {
           </p>
         </a>
 
-        <div className="rounded-2xl border border-border/70 bg-card p-8">
+        <div className="rounded-2xl border border-border/70 bg-card p-8 min-w-0">
           <MapPin className="h-6 w-6 text-primary" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Service Area
           </p>
-          <p className="mt-2 font-display text-2xl text-foreground">
+          <p className="mt-2 break-words font-display text-2xl text-foreground">
             Greater Toronto Area (GTA)
             <span className="mx-2 text-muted-foreground">|</span>
             Brant County &amp; Surroundings

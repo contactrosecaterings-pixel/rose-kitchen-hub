@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 const links = [
   { to: "/", label: "Home" },
@@ -69,50 +69,50 @@ export function SiteNav() {
         </button>
       </div>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            key="mobile-overlay"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "100vh" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-x-0 top-0 z-[9999] overflow-hidden bg-white md:hidden"
-          >
-            <motion.nav
-              initial="closed"
-              animate="open"
-              exit="closed"
+      <div
+        aria-hidden={!open}
+        className="fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white md:hidden"
+        style={{
+          opacity: open ? 1 : 0,
+          visibility: open ? "visible" : "hidden",
+          pointerEvents: open ? "auto" : "none",
+          transition: "opacity 360ms cubic-bezier(0.16, 1, 0.3, 1), visibility 360ms",
+          willChange: "opacity, transform",
+          transform: "translate3d(0,0,0)",
+        }}
+      >
+        <motion.nav
+          initial={false}
+          animate={open ? "open" : "closed"}
+          variants={{
+            open: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } },
+            closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+          }}
+          className="flex h-full flex-col gap-2 px-8 pb-12 pt-28"
+        >
+          {links.map((l) => (
+            <motion.div
+              key={l.to}
               variants={{
-                open: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
-                closed: { transition: { staggerChildren: 0.03, staggerDirection: -1 } },
+                open: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
+                closed: { opacity: 0, y: -16, transition: { duration: 0.2 } },
               }}
-              className="flex h-full flex-col gap-2 px-8 pb-12 pt-28"
+              style={{ willChange: "transform, opacity" }}
+              className="border-b border-neutral-200"
             >
-              {links.map((l) => (
-                <motion.div
-                  key={l.to}
-                  variants={{
-                    open: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                    closed: { opacity: 0, y: -20, transition: { duration: 0.2 } },
-                  }}
-                  className="border-b border-neutral-200"
-                >
-                  <Link
-                    to={l.to}
-                    activeOptions={{ exact: l.to === "/" }}
-                    onClick={() => setOpen(false)}
-                    className="block py-5 font-display text-3xl font-semibold tracking-tight text-neutral-900 transition-colors hover:text-primary"
-                    activeProps={{ className: "text-primary" }}
-                  >
-                    {l.label}
-                  </Link>
-                </motion.div>
-              ))}
-            </motion.nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <Link
+                to={l.to}
+                activeOptions={{ exact: l.to === "/" }}
+                onClick={() => setOpen(false)}
+                className="block py-5 font-display text-3xl font-semibold tracking-tight text-neutral-900 transition-colors hover:text-primary"
+                activeProps={{ className: "text-primary" }}
+              >
+                {l.label}
+              </Link>
+            </motion.div>
+          ))}
+        </motion.nav>
+      </div>
     </header>
   );
 }

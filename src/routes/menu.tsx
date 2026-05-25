@@ -23,14 +23,14 @@ function MenuPage() {
       <header className="mb-10 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Our Menu</p>
         <p className="mt-4 inline-block rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.32em] text-primary">
-          [ ✨ 100% Halal Certified ]
+          ✨ 100% Halal Certified
         </p>
-        <h1 className="mt-6 font-display text-5xl text-foreground sm:text-6xl">
-          <span className="inline-flex flex-wrap items-baseline justify-center gap-x-3">
+        <h1 className="mt-6 font-display text-4xl text-foreground sm:text-6xl">
+          <span className="flex flex-col items-center justify-center gap-y-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-3">
             <span>A taste of</span>
             <span
-              className="relative inline-block text-left text-primary"
-              style={{ minWidth: `${longest.length}ch`, lineHeight: 1.1 }}
+              className="relative inline-flex items-baseline justify-center text-primary"
+              style={{ minWidth: `${longest.length + 1}ch`, lineHeight: 1.15 }}
             >
               <span className="whitespace-nowrap">{typed}</span>
               <span
