@@ -1,6 +1,5 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 
 const links = [
   { to: "/", label: "Home" },
@@ -19,59 +18,6 @@ export function SiteNav() {
       void router.preloadRoute({ to: link.to });
     });
   }, [router]);
-
-  useEffect(() => {
-    if (!open) return;
-    let themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-    let createdMeta = false;
-    if (!themeMeta) {
-      themeMeta = document.createElement("meta");
-      themeMeta.name = "theme-color";
-      document.head.appendChild(themeMeta);
-      createdMeta = true;
-    }
-    const prevTheme = themeMeta.content;
-    themeMeta.content = "#ffffff";
-    const { body, documentElement: html } = document;
-    const scrollY = window.scrollY;
-    const prev = {
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyLeft: body.style.left,
-      bodyRight: body.style.right,
-      bodyWidth: body.style.width,
-      bodyOverflow: body.style.overflow,
-      htmlOverflow: html.style.overflow,
-      htmlOverscroll: html.style.overscrollBehavior,
-      bodyOverscroll: body.style.overscrollBehavior,
-    };
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.width = "100%";
-    body.style.overflow = "hidden";
-    html.style.overflow = "hidden";
-    html.style.overscrollBehavior = "none";
-    body.style.overscrollBehavior = "none";
-    return () => {
-      body.style.position = prev.bodyPosition;
-      body.style.top = prev.bodyTop;
-      body.style.left = prev.bodyLeft;
-      body.style.right = prev.bodyRight;
-      body.style.width = prev.bodyWidth;
-      body.style.overflow = prev.bodyOverflow;
-      html.style.overflow = prev.htmlOverflow;
-      html.style.overscrollBehavior = prev.htmlOverscroll;
-      body.style.overscrollBehavior = prev.bodyOverscroll;
-      window.scrollTo(0, scrollY);
-      if (createdMeta) {
-        themeMeta?.remove();
-      } else if (themeMeta) {
-        themeMeta.content = prevTheme;
-      }
-    };
-  }, [open]);
 
   return (
     <header className="sticky top-0 z-[60] border-b border-border/60 bg-background/85 backdrop-blur-md">
@@ -134,7 +80,6 @@ export function SiteNav() {
         </button>
       </div>
 
-      {typeof document !== "undefined" && createPortal(
       <div
         aria-hidden={!open}
         className={[
@@ -167,9 +112,7 @@ export function SiteNav() {
             </div>
           ))}
         </nav>
-      </div>,
-      document.body,
-      )}
+      </div>
     </header>
   );
 }
