@@ -136,7 +136,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Key on the RESOLVED location so the page-transition animation only runs
+  // once the new route chunk has finished loading. Using the pending pathname
+  // makes the first visit (when the chunk is still loading) appear to snap in
+  // because the animation completes before the content mounts.
+  const pathname = useRouterState({ select: (s) => s.resolvedLocation?.pathname ?? s.location.pathname });
 
   return (
     <QueryClientProvider client={queryClient}>
