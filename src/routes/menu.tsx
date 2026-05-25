@@ -26,8 +26,9 @@ function MenuPage() {
             <span className="whitespace-nowrap">{typed}</span>
             <span
               aria-hidden
-              className="ml-0.5 inline-block w-[2px] self-stretch bg-primary"
+              className="ml-1 inline-block w-[3px] bg-primary"
               style={{ animation: "rc-caret-blink 1s steps(2) infinite" }}
+              style-ignore
             />
           </span>
         </h1>
