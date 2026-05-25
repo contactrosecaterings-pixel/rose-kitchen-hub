@@ -61,6 +61,7 @@ function MenuPage() {
                   key={section.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -6 }}
                   viewport={{ once: true, margin: "-60px" }}
                   transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   className="rc-lift rounded-2xl border border-border/70 bg-card p-6 shadow-sm hover:shadow-md"
