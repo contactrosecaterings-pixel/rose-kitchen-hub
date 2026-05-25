@@ -83,21 +83,14 @@ export function SiteNav() {
       <div
         aria-hidden={!open}
         className={[
-          "fixed inset-0 z-[9999] overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
+          "fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
           open
             ? "visible opacity-100 pointer-events-auto"
             : "invisible opacity-0 pointer-events-none",
         ].join(" ")}
-        style={{
-          willChange: "opacity",
-          transform: "translate3d(0,0,0)",
-          height: "100dvh",
-          minHeight: "100svh",
-          paddingTop: "env(safe-area-inset-top)",
-          paddingBottom: "env(safe-area-inset-bottom)",
-        }}
+        style={{ willChange: "opacity", transform: "translate3d(0,0,0)" }}
       >
-        <nav className="flex h-full flex-col gap-2 overflow-y-auto px-8 pb-12 pt-28">
+        <nav className="flex h-full flex-col gap-2 px-8 pb-12 pt-28">
           {links.map((l) => (
             <div key={l.to} className="border-b border-neutral-200">
               <Link
