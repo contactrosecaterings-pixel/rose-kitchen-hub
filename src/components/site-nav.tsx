@@ -50,6 +50,7 @@ export function SiteNav() {
           <span className="relative block h-4 w-6">
             <motion.span
               className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
+              initial={false}
               animate={open ? { top: "50%", y: "-50%", rotate: 45 } : { top: 0, y: 0, rotate: 0 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             />
@@ -62,6 +63,7 @@ export function SiteNav() {
             />
             <motion.span
               className="absolute left-0 right-0 block h-[2px] rounded-full bg-current"
+              initial={false}
               animate={open ? { bottom: "50%", y: "50%", rotate: -45 } : { bottom: 0, y: 0, rotate: 0 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             />
