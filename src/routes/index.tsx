@@ -82,7 +82,10 @@ function Index() {
   return (
     <>
       {/* HERO */}
-      <section ref={heroRef} className="relative isolate overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block"
+      >
         <div className="absolute inset-0 -z-10 bg-foreground" />
         <motion.div
           className="absolute inset-0 -z-10"
@@ -108,6 +111,8 @@ function Index() {
             className="absolute inset-0 h-full w-full object-cover"
             style={{ willChange: "transform", backfaceVisibility: "hidden" }}
           >
+            {/* To use a local asset, drop the file into /public and uncomment:
+            <source src="/hero-banner.mp4" type="video/mp4" /> */}
             <source
               src="https://videos.pexels.com/video-files/3196284/3196284-uhd_2560_1440_25fps.mp4"
               type="video/mp4"
@@ -122,19 +127,19 @@ function Index() {
           initial="hidden"
           animate="show"
           variants={{ show: { transition: { staggerChildren: 0.15, delayChildren: 0.1 } } }}
-          className="mx-auto max-w-5xl px-6 py-32 text-center text-background lg:py-44"
+          className="mx-auto w-full max-w-5xl px-6 py-12 text-center text-background sm:py-20 lg:py-44"
         >
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-5 text-xs font-medium uppercase tracking-[0.35em] text-background/80"
+            className="mb-4 text-[10px] font-medium uppercase tracking-[0.35em] text-background/80 sm:mb-5 sm:text-xs"
           >
             Authentic · Heritage · Home-Cooked
           </motion.p>
           <motion.h1
             variants={fadeUp}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl leading-[1.05] sm:text-6xl lg:text-7xl"
+            className="font-display text-[2.25rem] leading-[1.08] sm:text-6xl lg:text-7xl"
           >
             Premium Pakistani catering,<br />
             crafted the way it was meant to be.
@@ -142,14 +147,14 @@ function Index() {
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-6 inline-block rounded-full border border-background/40 bg-background/10 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-background backdrop-blur-sm"
+            className="mx-auto mt-4 inline-block rounded-full border border-background/40 bg-background/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-background backdrop-blur-sm sm:mt-6 sm:px-5 sm:py-2 sm:text-xs"
           >
             100% Halal Authentic Pakistani Catering
           </motion.p>
           <motion.p
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-background/85 sm:text-lg"
+            className="mx-auto mt-4 hidden max-w-2xl text-base leading-relaxed text-background/85 sm:mt-6 sm:block sm:text-lg"
           >
             Traditional spice blends, slow-cooking methods, and recipes handed down
             through generations — brought to your wedding, aqeeqah, Eid event,
@@ -158,11 +163,11 @@ function Index() {
           <motion.div
             variants={fadeUp}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10"
+            className="mt-6 sm:mt-10"
           >
             <Link
               to="/booking"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-4 text-base font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:brightness-105"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-[1.04] hover:shadow-xl hover:brightness-105 sm:px-8 sm:py-4 sm:text-base"
             >
               Book a Catering Inquiry
             </Link>
