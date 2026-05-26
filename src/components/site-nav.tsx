@@ -1,5 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const links = [
   { to: "/", label: "Home" },
@@ -12,6 +13,7 @@ const links = [
 export function SiteNav() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     links.forEach((link) => {
@@ -19,8 +21,37 @@ export function SiteNav() {
     });
   }, [router]);
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 4);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Lock body scroll while the mobile menu is open so iOS rubber-band
+  // can't reveal the cream page beneath the white overlay.
+  useEffect(() => {
+    if (!open) return;
+    const { body, documentElement } = document;
+    const prevBodyOverflow = body.style.overflow;
+    const prevHtmlOverscroll = documentElement.style.overscrollBehavior;
+    body.style.overflow = "hidden";
+    documentElement.style.overscrollBehavior = "none";
+    return () => {
+      body.style.overflow = prevBodyOverflow;
+      documentElement.style.overscrollBehavior = prevHtmlOverscroll;
+    };
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-[60] border-b border-border/60 bg-background/85 backdrop-blur-md">
+    <header
+      className={[
+        "sticky top-0 z-[60] transition-[background-color,border-color,backdrop-filter] duration-300",
+        scrolled || open
+          ? "border-b border-border/60 bg-background/85 backdrop-blur-md"
+          : "border-b border-transparent bg-transparent",
+      ].join(" ")}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
         <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
           <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
@@ -51,30 +82,28 @@ export function SiteNav() {
         <button
           aria-label="Toggle menu"
           aria-expanded={open}
-          className="relative z-[10000] flex h-11 w-11 translate-z-0 items-center justify-center rounded-full text-foreground md:hidden"
+          className="relative z-[10000] flex h-11 w-11 items-center justify-center rounded-full text-foreground md:hidden"
           onClick={() => setOpen((v) => !v)}
-          style={{ color: open ? "oklch(0.22 0.02 60)" : "var(--color-foreground)", opacity: 1, visibility: "visible", willChange: "transform" }}
+          style={{ color: "var(--color-foreground)" }}
         >
-          <span className="relative block h-4 w-6 opacity-100" style={{ transform: "translate3d(0,0,0)" }}>
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
-              style={{
-                backgroundColor: "currentColor",
-                top: open ? "50%" : 0,
-                transform: open ? "translateY(-50%) rotate(45deg)" : "translateY(0) rotate(0)",
-              }}
+          <span className="relative block h-4 w-6">
+            <motion.span
+              className="absolute left-0 right-0 top-0 block h-[2px] rounded-full"
+              style={{ backgroundColor: "currentColor", transformOrigin: "50% 50%" }}
+              animate={open ? { y: 7, rotate: 45 } : { y: 0, rotate: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             />
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-opacity duration-200 ease-out"
-              style={{ backgroundColor: "currentColor", top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
+            <motion.span
+              className="absolute left-0 right-0 top-1/2 block h-[2px] -translate-y-1/2 rounded-full"
+              style={{ backgroundColor: "currentColor" }}
+              animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             />
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
-              style={{
-                backgroundColor: "currentColor",
-                bottom: open ? "50%" : 0,
-                transform: open ? "translateY(50%) rotate(-45deg)" : "translateY(0) rotate(0)",
-              }}
+            <motion.span
+              className="absolute left-0 right-0 bottom-0 block h-[2px] rounded-full"
+              style={{ backgroundColor: "currentColor", transformOrigin: "50% 50%" }}
+              animate={open ? { y: -7, rotate: -45 } : { y: 0, rotate: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             />
           </span>
         </button>
@@ -83,12 +112,12 @@ export function SiteNav() {
       <div
         aria-hidden={!open}
         className={[
-          "fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
+          "fixed inset-0 z-[9999] w-screen overflow-hidden bg-white transition-opacity duration-300 ease-out md:hidden",
           open
             ? "visible opacity-100 pointer-events-auto"
             : "invisible opacity-0 pointer-events-none",
         ].join(" ")}
-        style={{ willChange: "opacity", transform: "translate3d(0,0,0)" }}
+        style={{ height: "100lvh", minHeight: "100dvh", willChange: "opacity" }}
       >
         <nav className="flex h-full flex-col gap-2 px-8 pb-12 pt-28">
           {links.map((l) => (
