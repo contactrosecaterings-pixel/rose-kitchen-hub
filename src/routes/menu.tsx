@@ -63,7 +63,7 @@ function MenuPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   whileHover={{ y: -6 }}
                   viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.9, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
                   className="rc-lift rounded-2xl border border-border/70 bg-card p-6 shadow-sm hover:shadow-md"
                 >
                   <h3 className="font-display text-xl text-primary">{section.name}</h3>

@@ -81,7 +81,7 @@ function Index() {
   return (
     <>
       {/* HERO */}
-      <section className="relative isolate flex min-h-[100dvh] items-center overflow-hidden lg:min-h-0 lg:block">
+      <section className="relative isolate flex min-h-svh items-center overflow-hidden lg:min-h-0 lg:block">
         <div className="absolute inset-0 -z-10 bg-foreground" />
         <motion.div
           className="absolute inset-0 -z-10"
@@ -207,7 +207,7 @@ function Index() {
               whileInView={{ opacity: 1, y: 0 }}
               whileHover={{ y: -6 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.9, delay: i * 0.18, ease: [0.16, 1, 0.3, 1] }}
               className="rc-lift group overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm hover:shadow-lg"
             >
               <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -249,7 +249,7 @@ function Index() {
             viewport={{ once: true, margin: "-80px" }}
             variants={{
               hidden: {},
-              visible: { transition: { staggerChildren: 0.12 } },
+              visible: { transition: { staggerChildren: 0.18 } },
             }}
             className="-mx-6 flex snap-x snap-mandatory items-start gap-4 overflow-x-auto px-6 pb-16 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:snap-none md:grid-cols-3 md:items-start md:gap-8 md:overflow-visible md:px-0 md:pb-0 md:pt-0"
           >
@@ -261,7 +261,7 @@ function Index() {
                   visible: { opacity: 1, y: 0 },
                 }}
                 whileHover={{ y: -6 }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
                 className={[
                   "rc-lift relative flex w-[85vw] shrink-0 snap-center flex-col overflow-hidden rounded-3xl border border-primary/15 bg-card/95 p-7 shadow-[0_30px_60px_-30px_rgba(120,80,30,0.25)] backdrop-blur-sm hover:shadow-[0_40px_70px_-30px_rgba(120,80,30,0.35)] md:w-auto md:shrink md:snap-align-none",
                   i === 1 ? "md:mt-10" : "",
@@ -325,4 +325,3 @@ function ParallaxImage({ src, alt, eager = false }: { src: string; alt: string; 
     </div>
   );
 }
-// Sync Update
