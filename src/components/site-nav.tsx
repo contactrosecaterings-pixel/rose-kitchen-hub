@@ -1,5 +1,6 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const links = [
   { to: "/", label: "Home" },
@@ -11,18 +12,36 @@ const links = [
 
 export function SiteNav() {
   const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
 
+  // Preload routes
   useEffect(() => {
     links.forEach((link) => {
       void router.preloadRoute({ to: link.to });
     });
   }, [router]);
 
+  // Auto-close on route change
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll only while open. Cleanup restores everything — no
+  // leftover styles that could make iOS Safari paint an opaque bar.
+  useEffect(() => {
+    if (!open) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open]);
+
   return (
     <header className="sticky top-0 z-[60] border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-        <Link to="/" className="group flex items-center gap-2" onClick={() => setOpen(false)}>
+        <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
             Rose <span className="text-primary">Caterings</span>
           </span>
@@ -49,63 +68,78 @@ export function SiteNav() {
         </nav>
 
         <button
-          aria-label="Toggle menu"
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          className="relative z-[10000] flex h-11 w-11 translate-z-0 items-center justify-center rounded-full text-foreground md:hidden"
           onClick={() => setOpen((v) => !v)}
-          style={{ color: open ? "oklch(0.22 0.02 60)" : "var(--color-foreground)", opacity: 1, visibility: "visible", willChange: "transform" }}
+          className="relative z-[70] flex h-11 w-11 items-center justify-center rounded-full text-foreground md:hidden"
         >
-          <span className="relative block h-4 w-6 opacity-100" style={{ transform: "translate3d(0,0,0)" }}>
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
-              style={{
-                backgroundColor: "currentColor",
-                top: open ? "50%" : 0,
-                transform: open ? "translateY(-50%) rotate(45deg)" : "translateY(0) rotate(0)",
-              }}
+          <span className="relative block h-4 w-6">
+            <motion.span
+              aria-hidden
+              className="absolute left-0 right-0 top-0 block h-[2px] rounded-full bg-current"
+              animate={open ? { y: 7, rotate: 45 } : { y: 0, rotate: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              style={{ originX: 0.5, originY: 0.5 }}
             />
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-opacity duration-200 ease-out"
-              style={{ backgroundColor: "currentColor", top: "50%", transform: "translateY(-50%)", opacity: open ? 0 : 1 }}
+            <motion.span
+              aria-hidden
+              className="absolute left-0 right-0 top-1/2 block h-[2px] -translate-y-1/2 rounded-full bg-current"
+              animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             />
-            <span
-              className="absolute left-0 right-0 block h-[2px] rounded-full transition-transform duration-300 ease-out"
-              style={{
-                backgroundColor: "currentColor",
-                bottom: open ? "50%" : 0,
-                transform: open ? "translateY(50%) rotate(-45deg)" : "translateY(0) rotate(0)",
-              }}
+            <motion.span
+              aria-hidden
+              className="absolute bottom-0 left-0 right-0 block h-[2px] rounded-full bg-current"
+              animate={open ? { y: -7, rotate: -45 } : { y: 0, rotate: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              style={{ originX: 0.5, originY: 0.5 }}
             />
           </span>
         </button>
       </div>
 
-      <div
-        aria-hidden={!open}
-        className={[
-          "fixed inset-x-0 top-0 z-[9999] h-screen overflow-hidden bg-white transition-all duration-300 ease-out md:hidden",
-          open
-            ? "visible opacity-100 pointer-events-auto"
-            : "invisible opacity-0 pointer-events-none",
-        ].join(" ")}
-        style={{ willChange: "opacity", transform: "translate3d(0,0,0)" }}
-      >
-        <nav className="flex h-full flex-col gap-2 px-8 pb-12 pt-28">
-          {links.map((l) => (
-            <div key={l.to} className="border-b border-neutral-200">
-              <Link
-                to={l.to}
-                activeOptions={{ exact: l.to === "/" }}
-                onClick={() => setOpen(false)}
-                className="block py-5 font-display text-3xl font-semibold tracking-tight text-neutral-900 transition-colors hover:text-primary"
-                activeProps={{ className: "text-primary" }}
-              >
-                {l.label}
-              </Link>
-            </div>
-          ))}
-        </nav>
-      </div>
+      {/*
+        Mobile overlay — only mounted while open. Unmounting on close is
+        critical: leaving a full-viewport fixed element in the DOM (even
+        invisible / pointer-events-none) causes iOS Safari 26's Liquid
+        Glass bottom bar to paint an opaque panel behind it instead of
+        letting page content flow underneath.
+      */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="mobile-menu"
+            className="fixed inset-0 z-[65] bg-white md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <nav className="flex h-full flex-col gap-2 overflow-y-auto px-8 pb-12 pt-24">
+              {links.map((l, i) => (
+                <motion.div
+                  key={l.to}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: 0.05 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                  className="border-b border-neutral-200"
+                >
+                  <Link
+                    to={l.to}
+                    activeOptions={{ exact: l.to === "/" }}
+                    onClick={() => setOpen(false)}
+                    className="block py-5 font-display text-3xl font-semibold tracking-tight text-neutral-900 transition-colors hover:text-primary"
+                    activeProps={{ className: "text-primary" }}
+                  >
+                    {l.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
