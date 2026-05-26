@@ -325,4 +325,3 @@ function ParallaxImage({ src, alt, eager = false }: { src: string; alt: string; 
     </div>
   );
 }
-// Sync Update
