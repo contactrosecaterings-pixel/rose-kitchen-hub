@@ -46,10 +46,10 @@ function ContactPage() {
           >
             <Phone className="h-6 w-6 shrink-0 text-primary lg:h-7 lg:w-7" />
             <div className="lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-between lg:gap-4">
-              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-32 lg:shrink-0">
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-24 lg:shrink-0 xl:w-32">
                 Phone
               </p>
-              <p className="mt-2 font-display text-2xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary lg:mt-0 lg:min-w-0 lg:truncate lg:whitespace-nowrap lg:[font-size:clamp(1rem,1.9vw,1.5rem)]">
+              <p className="mt-2 font-display text-2xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary lg:mt-0 lg:whitespace-nowrap lg:[font-size:clamp(0.95rem,1.6vw,1.4rem)]">
               (437) 410-1212
               </p>
             </div>
@@ -62,10 +62,10 @@ function ContactPage() {
           >
             <Mail className="h-6 w-6 shrink-0 text-primary lg:h-7 lg:w-7" />
             <div className="lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-between lg:gap-4">
-              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-32 lg:shrink-0">
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-24 lg:shrink-0 xl:w-32">
                 Email
               </p>
-              <p className="mt-2 break-words font-display text-xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary lg:mt-0 lg:min-w-0 lg:flex-1 lg:truncate lg:whitespace-nowrap lg:break-normal lg:text-right lg:[font-size:clamp(0.85rem,1.55vw,1.25rem)]">
+              <p className="mt-2 break-words font-display text-xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary lg:mt-0 lg:whitespace-nowrap lg:break-normal lg:text-right lg:[font-size:clamp(0.72rem,1.45vw,1.15rem)]">
                 contact.rosecaterings@gmail.com
               </p>
             </div>
@@ -75,11 +75,11 @@ function ContactPage() {
           <div className="rc-lift block min-w-0 rounded-2xl border border-border/70 bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg lg:flex lg:items-center lg:gap-6 lg:p-7">
             <MapPin className="h-6 w-6 shrink-0 text-primary lg:h-7 lg:w-7" />
             <div className="lg:flex lg:min-w-0 lg:flex-1 lg:items-center lg:justify-between lg:gap-4">
-              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-32 lg:shrink-0">
+              <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground lg:mt-0 lg:w-24 lg:shrink-0 xl:w-32">
                 Service Area
               </p>
               <div className="lg:min-w-0 lg:flex-1 lg:text-right">
-                <p className="mt-2 break-words font-display text-2xl text-foreground lg:mt-0 lg:truncate lg:whitespace-nowrap lg:[font-size:clamp(0.9rem,1.5vw,1.25rem)]">
+                <p className="mt-2 break-words font-display text-2xl text-foreground lg:mt-0 lg:[font-size:clamp(0.85rem,1.35vw,1.15rem)] lg:leading-snug">
                   Greater Toronto Area (GTA)
                   <span className="mx-2 text-muted-foreground">|</span>
                   Brant County &amp; Surroundings
