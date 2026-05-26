@@ -119,7 +119,7 @@ export function SiteNav() {
           open ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
         }`}
       >
-        <nav className="flex h-full flex-col items-center justify-center gap-2 px-8">
+        <nav className="flex h-full flex-col items-start justify-center gap-2 px-8 pt-20">
           {links.map((l, i) => (
             <Link
               key={l.to}
