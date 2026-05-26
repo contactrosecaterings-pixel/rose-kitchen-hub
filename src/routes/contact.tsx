@@ -48,7 +48,7 @@ function ContactPage() {
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Email
           </p>
-          <p className="mt-2 break-words font-display text-xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary">
+          <p className="mt-2 break-words font-display text-xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary md:text-base lg:text-lg lg:whitespace-nowrap">
             contact.rosecaterings@gmail.com
           </p>
         </a>
