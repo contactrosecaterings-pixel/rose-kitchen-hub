@@ -49,7 +49,11 @@ export function SiteNav() {
     <>
       <header className={`sticky top-0 z-[120] border-b bg-background/85 backdrop-blur-md transition-colors ${open ? "border-transparent" : "border-border/60"}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
-          <Link to="/" className="flex items-center gap-2">
+          <Link
+            to="/"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-2"
+          >
             <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
               Rose <span className="text-primary">Caterings</span>
             </span>
