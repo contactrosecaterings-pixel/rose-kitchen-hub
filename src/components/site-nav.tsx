@@ -47,7 +47,7 @@ export function SiteNav() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-md">
+      <header className={`sticky top-0 z-[120] border-b bg-background/85 backdrop-blur-md transition-colors ${open ? "border-transparent" : "border-border/60"}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-10">
           <Link to="/" className="flex items-center gap-2">
             <span className="font-display text-2xl font-semibold tracking-tight text-foreground">
@@ -119,7 +119,7 @@ export function SiteNav() {
           open ? "opacity-100 visible pointer-events-auto" : "opacity-0 invisible pointer-events-none"
         }`}
       >
-        <nav className="flex h-full flex-col items-center justify-center gap-2 px-8">
+        <nav className="flex h-full flex-col items-start justify-center gap-2 px-8 pt-20">
           {links.map((l, i) => (
             <Link
               key={l.to}
