@@ -29,29 +29,31 @@ function ContactPage() {
       <div className="mx-auto mt-14 grid w-full max-w-xl gap-6 md:max-w-none md:grid-cols-3">
         <a
           href="tel:+14374101212"
-          className="group rounded-2xl border border-border/70 bg-card p-8 transition-all hover:border-primary/50 hover:shadow-md"
+          className="rc-lift group block rounded-2xl border border-border/70 bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg"
         >
           <Phone className="h-6 w-6 text-primary" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Phone
           </p>
-          <p className="mt-2 font-display text-2xl text-foreground">(437) 410-1212</p>
+          <p className="mt-2 font-display text-2xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary">
+            (437) 410-1212
+          </p>
         </a>
 
         <a
           href="mailto:contact.rosecaterings@gmail.com"
-          className="group rounded-2xl border border-border/70 bg-card p-8 transition-all hover:border-primary/50 hover:shadow-md"
+          className="rc-lift group block rounded-2xl border border-border/70 bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg"
         >
           <Mail className="h-6 w-6 text-primary" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Email
           </p>
-          <p className="mt-2 break-words font-display text-xl text-foreground">
+          <p className="mt-2 break-words font-display text-xl text-foreground underline decoration-primary/30 decoration-1 underline-offset-4 transition-colors duration-300 group-hover:text-primary group-hover:decoration-primary">
             contact.rosecaterings@gmail.com
           </p>
         </a>
 
-        <div className="rounded-2xl border border-border/70 bg-card p-8 min-w-0">
+        <div className="rc-lift min-w-0 rounded-2xl border border-border/70 bg-card p-8 shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-lg">
           <MapPin className="h-6 w-6 text-primary" />
           <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
             Service Area
